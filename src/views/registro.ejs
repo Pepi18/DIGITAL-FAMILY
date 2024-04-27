@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+</head>
+<body>
+    <%- include('partials/navigation')%>
+       
+    <form class="form" action="/registrado" method="post">
+        <label>
+                <input class="input" type="text" name="nombrefamilia" placeholder="" required="">
+                <span>Username</span>
+        </label>
+                    
+        <label>
+            <input class="input" type="password" name="password" placeholder="" required="">
+            <span>Password</span>
+        </label>
+        <label>
+            <input class="input" type="password" placeholder="" required="">
+            <span>Confirm password</span>
+        </label>
+        <button class="submit">Enviar</button>
+        <p class="signin">Ya tienes una cuenta? <a href="/login">Signin</a> </p>
+        <% if (typeof successMessage !== 'undefined') { %>
+            <div class="alert alert-info" role="alert">
+                <%= successMessage %>
+            </div>
+        <% } %>
+        
+        <% if (typeof errorMessage !== 'undefined') { %>
+            <div class="alert alert-danger" role="alert">
+                <%= errorMessage %>
+            </div>
+        <% } %>
+        <h1>hola esto no funciona</h1>
+        
+        <a href="/agregarmiembros" class="add-family-button">Añadir familiares</a>
+        
+       
+    </form>
+    
+
+</body>
+</html>

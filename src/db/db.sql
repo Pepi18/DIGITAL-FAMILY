@@ -5,4 +5,3 @@ CREATE TABLE IF NOT EXISTS familias (
     password TEXT NOT NULL
 );
 
-

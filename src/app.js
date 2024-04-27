@@ -56,6 +56,7 @@ console.log(__dirname, 'views');
 
 //servir archivos estáticos
 app.use('/css', express.static(join(__dirname,'css')));
+app.use('/imagenes', express.static(join(__dirname,'imagenes')));
 
 //usar enrutador
 app.use(indexRoutes);

@@ -15,16 +15,33 @@ export const login = (req, res) => {
     res.render('login',{ title: "login", errorMessage });
 };
 export const  homeFamilia=(req, res) => res.render ('homeFamilia', {title:"Familia"});
-export const  añadirfamiliares=(req, res) => res.render ('añadirfamiliares', {title:"Añadir familiares"});
+export const  anadirfamiliares=(req, res) => res.render ('anadirfamiliares', {title:"Añadir familiares"});
 export const  animo=(req, res) => res.render ('animo', {title:"Estado de ánimo"});
 export const  calendario=(req, res) => res.render ('calendario', {title:"Calendario"});
 export const  diario=(req, res) => res.render ('diario', {title:"Diario"});
 export const  tareas=(req, res) => res.render ('tareas', {title:"Tareas"});
 export const  logros=(req, res) => res.render ('logros', {title:"Logros"});
 export const  chat=(req, res) => res.render ('chat', {title:"Chat"});
+export const  agregarmiembros=(req, res) => res.render ('agregarmiembros', {title:"agregarmiembros"});
 
 
 
+//controlador para el registro
+export const submitcontroller = async (req, res) => {
+    console.log(req.body); 
+    const { nombrefamilia, password } = req.body;
+
+    try {
+        // Intentar registrar al usuario
+        await createsubmit(nombrefamilia, password);
+        // Si se realiza el registro con éxito, redirigir a la página principal u otra página
+        res.render('registro.ejs', { title:'registro.ejs', successMessage: 'Registro exitoso' });
+    } catch (error) {
+        // Si hay un error al registrar al usuario, mostrar un mensaje de error en la página de registro
+        console.error('Error en el registro:', error);
+        res.render('registro.ejs', { title: 'registro.ejs', errorMessage: 'Error en el registro. Nombre de usuario ya existe. Por favor, inténtalo de nuevo con otro nombre de usuario.' });
+    }
+};
 
 
 
@@ -84,19 +101,7 @@ export const postcontroller = async (req, res) => {
         res.status(500).send('Error al guardar el post');
     }
 };
-//controlador para el registro
-export const submitcontroller = async (req, res) => {
-    console.log(req.body); 
-    const { username, email, password } = req.body;
 
-    try {
-        await createsubmit(username, email, password);
-        res.render('registro.ejs', { title:'registro.ejs', successMessage: 'Registro exitoso' });
-    } catch (error) {
-        console.error('Error en el registro:', error);
-        res.status(500).send('Error en el resgitro');
-    }
-};
 
 // Controlador para el inicio de sesión
 export const loginController = async (req, res) => {

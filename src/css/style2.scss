@@ -1,0 +1,232 @@
+/*Colors*/
+$red: #ff3333;
+$yellow: #ffcc33;
+$aqua: #55dde0;
+$lightPurple: #9966cc;
+$tealBLue: #33658a;
+$linear: linear-gradient(90deg, #3f4593, #5960bd);
+
+/*Font*/ 
+$mainFont: 'Roboto', sans-serif;
+/* Reset*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: $linear;
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Start Style*/
+.main__menu {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+    //opacity:0;
+  }
+  .list-item {
+    &:hover {
+      .drop-menu li {
+        display: block;
+      }
+      .menu-1 {
+        perspective: 1000px;
+        .drop-item {
+          opacity: 0;
+          @for $i from 1 through 4 {
+            &:nth-child(#{$i}) {
+              animation-name: leftToRight;
+              animation-duration: 400ms;
+              animation-delay: (150ms * $i) - 300;
+              animation-timing-function: ease-in-out;
+              animation-fill-mode: forwards;
+            }
+          }
+        }
+      }
+      .menu-2 {
+        perspective: 1000px;
+        .drop-item {
+          opacity: 0;
+          transform-origin: top center;
+          @for $i from 1 through 4 {
+            &:nth-child(#{$i}) {
+              animation-name: topToBottom;
+              animation-duration: 400ms;
+              animation-delay: (150ms * $i) - 300;
+              animation-timing-function: ease-in-out;
+              animation-fill-mode: forwards;
+            }
+          }
+        }
+      }
+      .menu-3 {
+        perspective: 1000px;
+        .drop-item {
+          opacity: 0;
+          @for $i from 1 through 4 {
+            &:nth-child(#{$i}) {
+              animation-name: itemBounce;
+              animation-duration: 400ms;
+              animation-delay: (150ms * $i) - 300;
+              animation-timing-function: ease-in-out;
+              animation-fill-mode: forwards;
+            }
+          }
+        }
+      }
+      .menu-4 {
+        perspective: 1000px;
+        .drop-item {
+          opacity: 0;
+          transform-origin: top right;
+          @for $i from 1 through 4 {
+            &:nth-child(#{$i}) {
+              animation-name: bottomToTop;
+              animation-duration: 400ms;
+              animation-delay: (150ms * $i) - 300;
+              animation-timing-function: ease-in-out;
+              animation-fill-mode: forwards;
+            }
+          }
+        }
+      }
+      .home {
+        border-top: 6px solid $tealBLue;
+      }
+      .about {
+        border-top: 6px solid $lightPurple;
+      }
+      .widget {
+        border-top: 6px solid $red;
+      }
+      .kabobs {
+        border-top: 6px solid $yellow;
+      }
+      .contact {
+        border-top: 6px solid $aqua;
+      }
+    }
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 200px;
+      color: #fff;
+      cursor: unset;
+      &:hover {
+        cursor: pointer;
+      }
+      span {
+        font: 600 25px $mainFont;
+        order: 2;
+      }
+      img {
+        width: 100px;
+      }
+      &.home {
+        background: $red;
+      }
+      &.about {
+        background: $yellow;
+      }
+      &.widget {
+        background: $aqua;
+      }
+      &.kabobs {
+        background: $lightPurple;
+      }
+      &.contact {
+        background: $tealBLue;
+      }
+      i {
+        color: #fff;
+        font-size: 100px;
+      }
+    }
+    .drop-menu {
+      .drop-item {
+        display: none;
+        a {
+          height: 80px;
+          font: 300 22px $mainFont;
+          &.item--1 {
+            background: $yellow;
+          }
+          &.item--2 {
+            background: $tealBLue;
+          }
+          &.item--3 {
+            background: $red;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes leftToRight {
+  0% {
+    opacity: 0;
+    transform: rotateY(-90deg) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg) translateY(0px);
+  }
+}
+
+@keyframes topToBottom {
+  0% {
+    opacity: 0;
+    transform: rotateX(-90deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0deg);
+  }
+}
+
+
+@keyframes itemBounce {
+    0% {
+        opacity:0;
+        transform:scale(0.3) translateY(-60px);
+    }
+    80% {
+        transform:scale(1.2) translateY(10px);
+    }
+    100% {
+        opacity:1;
+        transform:scale(1) translateY(0px);
+    }
+}
+
+
+@keyframes bottomToTop {
+    0% {
+        opacity:0;
+        transform:rotate(-30deg);
+    }
+    100% {
+        opacity:1;
+        transform:rotate(0deg);
+    }
+}

@@ -2,6 +2,60 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import {GENERIC_DB_BASE} from '../config.js'
 
+//conectar la BBDD
+export async function connectDB() {
+    try {
+        const db = await open({
+            filename: GENERIC_DB_BASE,
+            driver: sqlite3.Database
+        });
+        console.log('Conexión a la base de datos establecida');
+        return db;
+    } catch (error) {
+        console.error('Error al conectar a la base de datos:', error);
+        throw error;
+    }
+}
+
+//Insertar los datos en la base de datos al realizar el registro
+export const createsubmit = async (nombrefamilia, password) => {
+    const queryCheck = 'SELECT COUNT(*) AS count FROM familias WHERE nombrefamilia = ?';
+    const queryInsert = 'INSERT INTO familias (nombrefamilia, password) VALUES (?, ?)';
+    try {
+        // Conectar a la base de datos
+        const db = await connectDB();
+
+        // Verificar si ya existe un usuario con ese nombre
+        const checkStatement = await db.prepare(queryCheck);
+        const { count } = await checkStatement.get(nombrefamilia);
+
+        if (count > 0) {
+            throw new Error('Ya existe un usuario con ese nombre de familia');
+        }
+
+        // Preparar la consulta de inserción
+        const insertStatement = await db.prepare(queryInsert);
+
+        // Ejecutar la consulta de inserción
+        const result = await insertStatement.run(nombrefamilia, password);
+
+        console.log('Usuario Registrado correctamente:', result.lastID);
+        return result.lastID;
+    } catch (error) {
+        console.error('Error en el registro:', error.message);
+        throw error;
+    }
+}
+
+
+
+
+
+
+
+
+
+
 // Función para obtener el nombre de la base de datos específica de una familia
 function getFamilyDatabaseName(familyId) {
     return `family_${familyId}.db`; // Se asume que cada familia tiene su propio archivo de base de datos SQLite
@@ -30,32 +84,12 @@ export async function connectToFamilyDatabase(familyId, username, password) {
     return familyDb;
 }
 
-// Función para conectarse a la base de datos genérica
-export async function connectGenericDatabase() {
-    const db = await open({
-        filename: GENERIC_DB_BASE,
-        driver: sqlite3.Database
-    });
-    
-    return db;
-}
+
 
 // Ejemplo de uso
-const db = await connectGenericDatabase();
-//conectar la BBDD
-export async function connectDB() {
-    try {
-        const db = await open({
-            filename: GENERIC_DB_BASE,
-            driver: sqlite3.Database
-        });
-        console.log('Conexión a la base de datos establecida');
-        return db;
-    } catch (error) {
-        console.error('Error al conectar a la base de datos:', error);
-        throw error;
-    }
-}
+const db = await connectDB();
+
+
 
 
 
@@ -101,21 +135,7 @@ export const createpost = async (titulo, texto) => {
         throw error;
     }
 };
-//Insertar los datos en la base de datos al realizar el registro
-export const createsubmit = async (username, email, password) => {
-    const database = 'userlogin'; 
-    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    try {
-        await pool.query(`USE ${database}`);
-        const [result] = await pool.query(query, [username, email, password]);
-        console.log('Usuario Registrado correctamente:', result);
-        return result;
-    } catch (error) {
-        console.error('Error en el registro:', error);
-        throw error;
-    }
 
-}
 //Verificar en la base de datos que las credenciales de inicio de sesión son las correctas
 export const verifyCredentials = async (username, password) => {
     console.log('Valor de username:', username);
