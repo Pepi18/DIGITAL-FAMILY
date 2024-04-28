@@ -8,40 +8,48 @@
 </head>
 <body>
     <%- include('partials/navigation')%>
-       
-    <form class="form" action="/registrado" method="post">
-        <label>
-                <input class="input" type="text" name="nombrefamilia" placeholder="" required="">
-                <span>Username</span>
-        </label>
-                    
-        <label>
-            <input class="input" type="password" name="password" placeholder="" required="">
-            <span>Password</span>
-        </label>
-        <label>
-            <input class="input" type="password" placeholder="" required="">
-            <span>Confirm password</span>
-        </label>
-        <button class="submit">Enviar</button>
-        <p class="signin">Ya tienes una cuenta? <a href="/login">Signin</a> </p>
-        <% if (typeof successMessage !== 'undefined') { %>
-            <div class="alert alert-info" role="alert">
-                <%= successMessage %>
-            </div>
-        <% } %>
+        <br>
+        <br>
+        <br>
+        <div class="form-card1">
+        <div class="form-card2">
+            <form class="form" action="/registrado" method="post">
+                <p class="form-heading">REGISTRO DE FAMILIA</p>
+                <div class="form-field">
+                    <input class="input-field" type="text" name="nombrefamilia" placeholder="Username" required="">
+                </div>
+                <div class="form-field">
+                    <input class="input-field" type="email" name="email" placeholder="email" required="">
+                </div>
+                <div class="form-field">
+                    <input class="input-field" type="password" name="password" placeholder="Password" required="">
+                </div>
+                <div class="form-field">
+                    <input class="input-field" type="password" placeholder="Confirm password" required="">
+                </div>
+                <button class="sendMessage-btn">ENVIAR</button>
+                <a href="/login" class="sendMessage-btn">Ya tienes una cuenta? Inicio de sesión</a>
+                <a href="/agregarmiembros" class="sendMessage-btn">AÑADIR FAMILIARES</a>
+            </form>
+            
+            <% if (typeof successMessage !== 'undefined') { %>
+                <div class="alert alert-info" role="alert">
+                    <%= successMessage %>
+                </div>
+            <% } %>
+            <% if (typeof errorMessage !== 'undefined') { %>
+                <div class="alert-danger" role="alert">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+        </div>
         
-        <% if (typeof errorMessage !== 'undefined') { %>
-            <div class="alert alert-danger" role="alert">
-                <%= errorMessage %>
-            </div>
-        <% } %>
-        <h1>hola esto no funciona</h1>
-        
-        <a href="/agregarmiembros" class="add-family-button">Añadir familiares</a>
-        
-       
-    </form>
+    </div>
+    <br>
+    <br>
+    <br>
+    
+    
     
 
 </body>

@@ -18,9 +18,9 @@ export async function connectDB() {
 }
 
 //Insertar los datos en la base de datos al realizar el registro
-export const createsubmit = async (nombrefamilia, password) => {
+export const createsubmit = async (nombrefamilia, email, password) => {
     const queryCheck = 'SELECT COUNT(*) AS count FROM familias WHERE nombrefamilia = ?';
-    const queryInsert = 'INSERT INTO familias (nombrefamilia, password) VALUES (?, ?)';
+    const queryInsert = 'INSERT INTO familias (nombrefamilia, email, password) VALUES (?, ?, ?)';
     try {
         // Conectar a la base de datos
         const db = await connectDB();
@@ -37,7 +37,7 @@ export const createsubmit = async (nombrefamilia, password) => {
         const insertStatement = await db.prepare(queryInsert);
 
         // Ejecutar la consulta de inserción
-        const result = await insertStatement.run(nombrefamilia, password);
+        const result = await insertStatement.run(nombrefamilia, email, password);
 
         console.log('Usuario Registrado correctamente:', result.lastID);
         return result.lastID;

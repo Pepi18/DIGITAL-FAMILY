@@ -29,17 +29,17 @@ export const  agregarmiembros=(req, res) => res.render ('agregarmiembros', {titl
 //controlador para el registro
 export const submitcontroller = async (req, res) => {
     console.log(req.body); 
-    const { nombrefamilia, password } = req.body;
+    const { nombrefamilia, email, password } = req.body;
 
     try {
         // Intentar registrar al usuario
-        await createsubmit(nombrefamilia, password);
+        await createsubmit(nombrefamilia, email, password);
         // Si se realiza el registro con éxito, redirigir a la página principal u otra página
         res.render('registro.ejs', { title:'registro.ejs', successMessage: 'Registro exitoso' });
     } catch (error) {
         // Si hay un error al registrar al usuario, mostrar un mensaje de error en la página de registro
         console.error('Error en el registro:', error);
-        res.render('registro.ejs', { title: 'registro.ejs', errorMessage: 'Error en el registro. Nombre de usuario ya existe. Por favor, inténtalo de nuevo con otro nombre de usuario.' });
+        res.render('registro.ejs', { title: 'registro.ejs', errorMessage: 'Error en el registro. Por favor, inténtalo de nuevo.' });
     }
 };
 

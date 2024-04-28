@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS familias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombrefamilia TEXT NOT NULL,
+    email TEXT NOT NULL,
     password TEXT NOT NULL
 );
 
