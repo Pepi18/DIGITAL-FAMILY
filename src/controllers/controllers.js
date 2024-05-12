@@ -1,4 +1,6 @@
-import {createpost, createsubmit, verifyCredentials, searchPostsInDatabase, deleteRecord} from '../db/db.js';
+import {createpost,verifyCredentials, searchPostsInDatabase, deleteRecord, connectDB, createFamilyTable, insertDataIntoTable, getFamilyNameByTableName} from '../db/db.js';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
 //Controladores para las distintas url
 export const home=(req, res) => res.render ('home', {title:"home"});
@@ -15,7 +17,6 @@ export const login = (req, res) => {
     res.render('login',{ title: "login", errorMessage });
 };
 export const  homeFamilia=(req, res) => res.render ('homeFamilia', {title:"Familia"});
-export const  anadirfamiliares=(req, res) => res.render ('anadirfamiliares', {title:"Añadir familiares"});
 export const  animo=(req, res) => res.render ('animo', {title:"Estado de ánimo"});
 export const  calendario=(req, res) => res.render ('calendario', {title:"Calendario"});
 export const  diario=(req, res) => res.render ('diario', {title:"Diario"});
@@ -25,23 +26,63 @@ export const  chat=(req, res) => res.render ('chat', {title:"Chat"});
 export const  agregarmiembros=(req, res) => res.render ('agregarmiembros', {title:"agregarmiembros"});
 
 
-
-//controlador para el registro
 export const submitcontroller = async (req, res) => {
-    console.log(req.body); 
-    const { nombrefamilia, email, password } = req.body;
-
     try {
-        // Intentar registrar al usuario
-        await createsubmit(nombrefamilia, email, password);
-        // Si se realiza el registro con éxito, redirigir a la página principal u otra página
-        res.render('registro.ejs', { title:'registro.ejs', successMessage: 'Registro exitoso' });
+        const { username, email, password, familyname } = req.body;
+
+        // Verificar qué campos están llegando y sus valores
+        console.log('Username:', username);
+        console.log('Mail:', email);
+        console.log('Password:', password);
+        console.log('Familyname:', familyname);
+
+        // Validar que todos los campos estén completos
+        if (!username || !email || !password || !familyname || username.trim() === '' || email.trim() === '' || password.trim() === '' || familyname.trim() === '') {
+            throw new Error('Por favor, complete todos los campos.');
+        }
+
+        const db = await connectDB(); // Conexión a la base de datos
+
+        // Crear un nombre único para la tabla
+        const tableName = `${familyname}${Date.now()}`;
+
+        // Crear la tabla
+        await createFamilyTable(db, tableName);
+
+        // Insertar datos en la tabla
+        await insertDataIntoTable(db, tableName, {
+            username,
+            email,
+            password,
+            familyname
+        });
+
+        // Redirigir al usuario a su página homeFamilia directamente
+        res.redirect(`/homeFamilia/${tableName}`);
     } catch (error) {
-        // Si hay un error al registrar al usuario, mostrar un mensaje de error en la página de registro
-        console.error('Error en el registro:', error);
-        res.render('registro.ejs', { title: 'registro.ejs', errorMessage: 'Error en el registro. Por favor, inténtalo de nuevo.' });
+        console.error('Error al procesar el formulario:', error);
+        res.status(400).send(error.message); // Devolver un error al cliente si algún campo no está cumplimentado
     }
 };
+
+export const homeFamiliaController = async (req, res) => {
+    try {
+        const tableName = req.params.tableName; // Obtener el tableName de los parámetros de la URL
+        const familyname = await getFamilyNameByTableName(tableName); // Obtener el familyname asociado al tableName
+
+        // Definir el título para la página
+        const title = 'Página de inicio de la familia';
+
+        // Renderizar la vista de la página de inicio de la familia, pasando la información necesaria
+        res.render('homeFamilia', { title: title, familyname: familyname, tableName: tableName /* O cualquier otra información de la familia */ });
+    } catch (error) {
+        console.error('Error al cargar la página de la familia:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+};
+
+
+
 
 
 

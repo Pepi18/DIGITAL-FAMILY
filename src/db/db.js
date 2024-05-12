@@ -2,6 +2,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import {GENERIC_DB_BASE} from '../config.js'
 
+
 //conectar la BBDD
 export async function connectDB() {
     try {
@@ -17,71 +18,68 @@ export async function connectDB() {
     }
 }
 
-//Insertar los datos en la base de datos al realizar el registro
-export const createsubmit = async (nombrefamilia, email, password) => {
-    const queryCheck = 'SELECT COUNT(*) AS count FROM familias WHERE nombrefamilia = ?';
-    const queryInsert = 'INSERT INTO familias (nombrefamilia, email, password) VALUES (?, ?, ?)';
+export async function createFamilyTable(db, tableName) {
     try {
-        // Conectar a la base de datos
-        const db = await connectDB();
-
-        // Verificar si ya existe un usuario con ese nombre
-        const checkStatement = await db.prepare(queryCheck);
-        const { count } = await checkStatement.get(nombrefamilia);
-
-        if (count > 0) {
-            throw new Error('Ya existe un usuario con ese nombre de familia');
-        }
-
-        // Preparar la consulta de inserción
-        const insertStatement = await db.prepare(queryInsert);
-
-        // Ejecutar la consulta de inserción
-        const result = await insertStatement.run(nombrefamilia, email, password);
-
-        console.log('Usuario Registrado correctamente:', result.lastID);
-        return result.lastID;
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS ${tableName} (
+                username TEXT,
+                mail TEXT,
+                password TEXT,
+                familyname TEXT,
+                fechadiario TEXT,
+                contenidodiario TEXT,
+                fechaanimo TEXT,
+                contenidoanimo TEXT,
+                fechamensaje TEXT,
+                contenidomensaje TEXT,
+                mensajeleido INTEGER,
+                tarea TEXT,
+                tareacompletada INTEGER,
+                descripcionlogro TEXT,
+                logroconseguido INTEGER,
+                tituloevento TEXT,
+                descripcionevento TEXT,
+                fechainicioevento TEXT
+            )
+        `);
+        console.log(`Tabla ${tableName} creada correctamente`);
     } catch (error) {
-        console.error('Error en el registro:', error.message);
+        console.error(`Error al crear la tabla ${tableName}:`, error);
         throw error;
     }
 }
 
 
-
-
-
-
-
-
-
-
-// Función para obtener el nombre de la base de datos específica de una familia
-function getFamilyDatabaseName(familyId) {
-    return `family_${familyId}.db`; // Se asume que cada familia tiene su propio archivo de base de datos SQLite
+export async function insertDataIntoTable(db, tableName, data) {
+    try {
+        await db.run(`
+            INSERT INTO ${tableName} (username, mail, password, familyname)
+            VALUES (?, ?, ?, ?)
+        `, [data.username, data.mail, data.password, data.familyname]);
+        console.log('Datos insertados correctamente en la tabla', tableName);
+    } catch (error) {
+        console.error('Error al insertar datos en la tabla:', error);
+        throw error;
+    }
 }
 
-// Función para conectar a la base de datos específica de una familia
-export async function connectToFamilyDatabase(familyId, username, password) {
-    const familyDbName = getFamilyDatabaseName(familyId);
-    
-    // Verificar las credenciales de usuario en la base de datos genérica
-    const genericDb = await open({
-        filename: GENERIC_DB_BASE,
-        driver: sqlite3.Database
-    });
-    const user = await genericDb.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
-    if (!user) {
-        throw new Error('Credenciales de usuario incorrectas');
-    }
-    
-    // Conectar a la base de datos familiar si las credenciales son correctas
-    const familyDb = await open({
-        filename: familyDbName,
-        driver: sqlite3.Database
-    });
+export async function getFamilyNameByTableName(tableName) {
+    try {
+        const db = await connectDB(); // Conectar a la base de datos
 
-    return familyDb;
+        // Consultar la base de datos para obtener el familyname asociado al tableName
+        const query = 'SELECT familyname FROM ' + tableName + ' LIMIT 1'; // Limitamos a 1 para obtener solo un registro
+        const result = await db.get(query);
+
+        if (!result) {
+            throw new Error(`No se encontró la familia asociada al tableName ${tableName}`);
+        }
+
+        return result.familyname;
+    } catch (error) {
+        console.error('Error al obtener el nombre de la familia por tableName:', error);
+        throw error;
+    }
 }
 
 

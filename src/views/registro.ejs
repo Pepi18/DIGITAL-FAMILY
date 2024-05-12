@@ -13,23 +13,23 @@
         <br>
         <div class="form-card1">
         <div class="form-card2">
-            <form class="form" action="/registrado" method="post">
-                <p class="form-heading">REGISTRO DE FAMILIA</p>
+            <form class="form" action="/homeFamilia" method="post">
+                <p class="form-heading">REGISTRO</p>
                 <div class="form-field">
-                    <input class="input-field" type="text" name="nombrefamilia" placeholder="Username" required="">
+                    <input class="input-field" type="text" name="username" placeholder="Username" required="">
                 </div>
                 <div class="form-field">
-                    <input class="input-field" type="email" name="email" placeholder="email" required="">
+                    <input class="input-field" type="email" name="email" placeholder="email">
                 </div>
                 <div class="form-field">
                     <input class="input-field" type="password" name="password" placeholder="Password" required="">
                 </div>
                 <div class="form-field">
-                    <input class="input-field" type="password" placeholder="Confirm password" required="">
+                    <input class="input-field" type="text" name="familyname" placeholder="Familyname" required="">
                 </div>
                 <button class="sendMessage-btn">ENVIAR</button>
                 <a href="/login" class="sendMessage-btn">Ya tienes una cuenta? Inicio de sesión</a>
-                <a href="/agregarmiembros" class="sendMessage-btn">AÑADIR FAMILIARES</a>
+                
             </form>
             
             <% if (typeof successMessage !== 'undefined') { %>
@@ -43,7 +43,8 @@
                 </div>
             <% } %>
         </div>
-        
+        <br>
+        <br>
     </div>
     <br>
     <br>
