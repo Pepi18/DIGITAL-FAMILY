@@ -1,4 +1,4 @@
-import {createpost,verifyCredentials, searchPostsInDatabase, deleteRecord, connectDB, createFamilyTable, insertDataIntoTable, getFamilyNameByTableName} from '../db/db.js';
+import {createpost,verifyCredentials, searchPostsInDatabase, deleteRecord, connectDB, createFamilyTable, insertDataIntoTable,insertMemberIntoTable, getFamilyNameByTableName} from '../db/db.js';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
@@ -81,7 +81,38 @@ export const homeFamiliaController = async (req, res) => {
     }
 };
 
+export const insertarmiembros = async (req, res) => {
+    try {
+        const { username, password } = req.body; // Obtener los datos del formulario
 
+        // Obtener tableName de los parámetros de la URL
+        const tableName = req.params.tableName;
+
+        // Imprimir los valores para verificar
+        console.log('Username:', username);
+        console.log('Password:', password);
+        console.log('TableName:', tableName);
+
+        // Validar que los campos no estén vacíos
+        if (!username || !password || !tableName) {
+            throw new Error('Por favor, complete todos los campos.');
+        }
+
+        // Imprimir los valores para verificar
+        console.log('Username:', username);
+        console.log('Password:', password);
+        console.log('TableName:', tableName);
+
+        // Insertar el miembro en la tabla correspondiente
+        await insertMemberIntoTable(tableName, username, password);
+
+        // Redirigir de vuelta a la página de agregar miembros
+        res.redirect(`/agregarmiembros/${tableName}`);
+    } catch (error) {
+        console.error('Error al procesar el formulario de agregar miembros:', error);
+        res.status(400).send(error.message);
+    }
+};
 
 
 

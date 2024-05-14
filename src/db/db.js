@@ -23,7 +23,7 @@ export async function createFamilyTable(db, tableName) {
         await db.exec(`
             CREATE TABLE IF NOT EXISTS ${tableName} (
                 username TEXT,
-                mail TEXT,
+                email TEXT,
                 password TEXT,
                 familyname TEXT,
                 fechadiario TEXT,
@@ -53,9 +53,9 @@ export async function createFamilyTable(db, tableName) {
 export async function insertDataIntoTable(db, tableName, data) {
     try {
         await db.run(`
-            INSERT INTO ${tableName} (username, mail, password, familyname)
+            INSERT INTO ${tableName} (username, email, password, familyname)
             VALUES (?, ?, ?, ?)
-        `, [data.username, data.mail, data.password, data.familyname]);
+        `, [data.username, data.email, data.password, data.familyname]);
         console.log('Datos insertados correctamente en la tabla', tableName);
     } catch (error) {
         console.error('Error al insertar datos en la tabla:', error);
@@ -82,10 +82,26 @@ export async function getFamilyNameByTableName(tableName) {
     }
 }
 
+export async function insertMemberIntoTable(tableName, username, password) {
+    try {
+        const db = await connectDB(); // Conectar a la base de datos
+
+        // Insertar los datos en la tabla correspondiente
+        await db.run(`
+            INSERT INTO ${tableName} (username, password)
+            VALUES (?, ?)
+        `, [username, password]);
+
+        console.log('Miembro insertado correctamente en la tabla', tableName);
+    } catch (error) {
+        console.error('Error al insertar miembro en la tabla:', error);
+        throw error;
+    }
+}
 
 
-// Ejemplo de uso
-const db = await connectDB();
+
+
 
 
 
