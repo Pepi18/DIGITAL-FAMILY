@@ -6,12 +6,22 @@
         <img src="../../imagenes/Pink Christmas Gingerbread house.svg" alt="">
       </a>
     </li>
-    <li class="list-item">
-      <a href="/homeFamilia" class="homeFamilia item--js">
-        <span>Mi Familia</span>
-        <img src="../../imagenes/family2.svg" alt="">
-      </a>
-    </li>
+    <% if (typeof tableName !== 'undefined') { %>
+      <li class="list-item">
+          <a href="/homeFamilia/<%= tableName %>" class="homeFamilia item--js">
+              <span>Mi Familia</span>
+              <img src="../../imagenes/family2.svg" alt="">
+          </a>
+      </li>
+  <% } else { %>
+      <li class="list-item">
+          <a href="/registro" class="registro item--js">
+              <span>Registro</span>
+              <img src="../../imagenes/Typewriter I love You.svg" alt="">
+          </a>
+      </li>
+  <% } %>
+  
     <li class="list-item">
       <a href="/chat" class="chat item--js">
         <span>Chat</span>

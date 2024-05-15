@@ -16,7 +16,7 @@ export const login = (req, res) => {
 
     res.render('login',{ title: "login", errorMessage });
 };
-export const  homeFamilia=(req, res) => res.render ('homeFamilia', {title:"Familia"});
+
 export const  animo=(req, res) => res.render ('animo', {title:"Estado de ánimo"});
 export const  calendario=(req, res) => res.render ('calendario', {title:"Calendario"});
 export const  diario=(req, res) => res.render ('diario', {title:"Diario"});
@@ -73,11 +73,14 @@ export const homeFamiliaController = async (req, res) => {
         // Definir el título para la página
         const title = 'Página de inicio de la familia';
 
-        // Renderizar la vista de la página de inicio de la familia, pasando la información necesaria
-        res.render('homeFamilia', { title: title, familyname: familyname, tableName: tableName /* O cualquier otra información de la familia */ });
+        // Generar el enlace a la página agregarmiembros
+        const agregarMiembrosLink = `/agregarmiembros/${tableName}`;
+
+        // Renderizar la página homeFamilia y pasar el enlace a la plantilla
+        res.render('homeFamilia', { title: title, familyname: familyname, tableName: tableName, agregarMiembrosLink: agregarMiembrosLink });
     } catch (error) {
-        console.error('Error al cargar la página de la familia:', error);
-        res.status(500).send('Error interno del servidor');
+        console.error('Error al procesar la solicitud de homeFamilia:', error);
+        res.status(500).send('Error al procesar la solicitud de homeFamilia');
     }
 };
 
@@ -111,6 +114,28 @@ export const insertarmiembros = async (req, res) => {
     } catch (error) {
         console.error('Error al procesar el formulario de agregar miembros:', error);
         res.status(400).send(error.message);
+    }
+};
+
+
+// Controlador para el inicio de sesión
+export const loginController = async (req, res) => {
+    const { username, password } = req.body;
+
+    // Verificar las credenciales consultando la base de datos
+    try {
+        const isAuthenticated = await verifyCredentials(username, password);
+
+        if (isAuthenticated) {
+            // Las credenciales son correctas, redirigir a la página de inicio de familia
+            return res.redirect(`/homeFamilia/${username}`);
+        } else {
+            // Usuario o contraseña incorrectos
+            return res.status(401).render('login', { errorMessage: 'Usuario o contraseña incorrectos', title: 'Login' });
+        }
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        return res.status(500).send('Error al iniciar sesión');
     }
 };
 
@@ -175,26 +200,7 @@ export const postcontroller = async (req, res) => {
 };
 
 
-// Controlador para el inicio de sesión
-export const loginController = async (req, res) => {
-    const { username, password } = req.body;
 
-    // Verificar las credenciales consultando la base de datos
-    try {
-        const isAuthenticated = await verifyCredentials(username, password);
-
-        if (isAuthenticated) {
-            // Las credenciales son correctas, redirigo a la zona personal
-            return res.redirect('/crud');
-        } else {
-            // Usuario o contraseña incorrectos
-            return res.status(401).render('login', { errorMessage: 'Usuario o contraseña incorrectos', title: 'Login' });
-        }
-    } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        return res.status(500).send('Error al iniciar sesión');
-    }
-};
 //Controlador para la búsqueda en la tabla posts
 export const searchPosts = async (req, res) => {
     try {

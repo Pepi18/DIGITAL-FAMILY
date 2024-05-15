@@ -20,6 +20,8 @@ export async function connectDB() {
 
 export async function createFamilyTable(db, tableName) {
     try {
+        
+        // Crear la tabla si el nombre de la tabla no está en uso
         await db.exec(`
             CREATE TABLE IF NOT EXISTS ${tableName} (
                 username TEXT,
@@ -48,6 +50,10 @@ export async function createFamilyTable(db, tableName) {
         throw error;
     }
 }
+
+
+
+
 
 
 export async function insertDataIntoTable(db, tableName, data) {
@@ -99,7 +105,45 @@ export async function insertMemberIntoTable(tableName, username, password) {
     }
 }
 
+//Verificar en la base de datos que las credenciales de inicio de sesión son las correctas
+export const verifyCredentials = async (tableName, username, password) => {
+    try {
+        const db = await connectDB(); // Conectar a la base de datos
 
+        // Verificar las credenciales en la tabla correspondiente a la familia
+        const query = 'SELECT username, password FROM ' + tableName + ' WHERE username = ? AND password = ? LIMIT 1';
+        const result = await db.get(query, [username, password]);
+
+        // Si se encuentra un registro, las credenciales son válidas
+        return !!result;
+    } catch (error) {
+        console.error('Error al verificar credenciales:', error);
+        throw error;
+    }
+};
+
+
+
+
+
+
+
+//Buscar post en la base de datos pos título
+export const searchPostsInDatabase = async (titulo) => {
+    const database = 'userlogin';
+    const query = 'SELECT * FROM posts WHERE titulo LIKE ?'; // Consulta para buscar publicaciones por título
+    
+    try {
+        // Ejecutar la consulta SQL con el título proporcionado
+        await pool.query(`USE ${database}`);
+        const [datos, _] = await pool.query(query, [`%${titulo}%`]);
+        console.log('Posts encontrados:', datos);
+        return datos; // Devolver los resultados de la búsqueda
+    } catch (error) {
+        console.error('Error al buscar publicaciones por título en la base de datos:', error);
+        throw error;
+    }
+};
 
 
 
@@ -150,54 +194,7 @@ export const createpost = async (titulo, texto) => {
     }
 };
 
-//Verificar en la base de datos que las credenciales de inicio de sesión son las correctas
-export const verifyCredentials = async (username, password) => {
-    console.log('Valor de username:', username);
-    console.log('Valor de password:', password);
-    const database = 'userlogin';
-    const query = 'SELECT username, password FROM users WHERE username = ? LIMIT 1';
-    console.log("Valor de username:", username);
-    try {
-        await pool.query(`USE ${database}`);
-        console.log('Conexión exitosa a la base de datos.');
 
-        const [userRows, _] = await pool.query(query, [username]);
-        console.log('Consulta ejecutada correctamente:', userRows);
-
-        if (userRows.length === 0) {
-            console.log('No se encontró ningún usuario con el nombre de usuario proporcionado.');
-            return false;
-        }
-
-        const user = userRows[0];
-        if (user.password === password) {
-            console.log('Contraseña coincidente.');
-            return true;
-        } else {
-            console.log('Contraseña incorrecta.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Error al verificar credenciales:', error);
-        throw error;
-    }
-};
-//Buscar post en la base de datos pos título
-export const searchPostsInDatabase = async (titulo) => {
-    const database = 'userlogin';
-    const query = 'SELECT * FROM posts WHERE titulo LIKE ?'; // Consulta para buscar publicaciones por título
-    
-    try {
-        // Ejecutar la consulta SQL con el título proporcionado
-        await pool.query(`USE ${database}`);
-        const [datos, _] = await pool.query(query, [`%${titulo}%`]);
-        console.log('Posts encontrados:', datos);
-        return datos; // Devolver los resultados de la búsqueda
-    } catch (error) {
-        console.error('Error al buscar publicaciones por título en la base de datos:', error);
-        throw error;
-    }
-};
 //Borrar registro de la base de datos
 export const deleteRecord= async (id) => {
     const database = 'userlogin';

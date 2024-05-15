@@ -1,14 +1,13 @@
 import {Router} from 'express';
 
 //importamos los callbacks
-import {home, login, registro, homeFamilia, calendario, chat, diario, animo, tareas, logros,homeFamiliaController,insertarmiembros, postcontroller, submitcontroller,loginController, searchPosts, eliminarRegistro} from '../controllers/controllers.js'
+import {home, login, registro, calendario, chat, diario, animo, tareas, logros,homeFamiliaController,insertarmiembros, postcontroller, submitcontroller,loginController, searchPosts, eliminarRegistro} from '../controllers/controllers.js'
 
 const router = Router(); 
 
 router.get ('/', home);
 router.get ('/login', login );
 router.get ('/registro', registro);
-//router.get('/homeFamilia', homeFamilia);
 router.get('/calendario', calendario);
 router.get('/chat', chat);
 router.get('/diario', diario);
@@ -25,8 +24,7 @@ router.get('/agregarmiembros/:tableName', (req, res) => {
 
 router.post('/agregarmiembros/:tableName', insertarmiembros);
 router.post('/homeFamilia', submitcontroller);
-//router.post('/homeFamilia', insertarmiembros);
-//router.post('/agregarmiembros', addMembersController);
+
 
 
 

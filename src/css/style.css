@@ -66,11 +66,13 @@ a {
   .main__menu .list-item:hover .Calendario {
     border-top: 6px solid #ed8fdf; }
   .main__menu .list-item:hover .animo {
-    border-top: 6px solid #0c482e; }
+    border-top: 6px solid #1aaf6f; }
   .main__menu .list-item:hover .tareas {
     border-top: 6px solid #f40cfc; }
   .main__menu .list-item:hover .logros {
     border-top: 6px solid #d55fe2; }
+  .main__menu .list-item:hover .registro {
+      border-top: 6px solid #2bee4b; }
   .main__menu .list-item a {
     display: flex;
     justify-content: center;
@@ -106,7 +108,9 @@ a {
     .main__menu .list-item a.tareas {
       background: #f57fe1; }
     .main__menu .list-item a.logros {
-      background: #ffc7fb; }                
+      background: #ffc7fb; }
+    .main__menu .list-item a.registro {
+        background: #7cf2b1; }                 
     .main__menu .list-item a i {
       color: #fff;
       font-size: 100px;

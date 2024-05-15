@@ -8,9 +8,31 @@
 </head>
 <body>
     <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>
-    
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <% if (errorMessage) { %>
+        <p><%= errorMessage %></p>
+    <% } %>
+    <div class="form-card1">
+        <div class="form-card2">
+    <form class="form" action="/login" method="POST">
+        <p class="form-heading">INICIO DE SESIÓN</p>
+        <div class="form-field">
+            <input class="input-field" type="text" name="username" placeholder="Username" required="">
+        </div>
+        <div class="form-field">
+            <input class="input-field" type="password" name="password" placeholder="Password" required="">
+        </div>
+        <button  class="sendMessage-btn" type="submit">Iniciar Sesión</button>
+    </form>
+        </div>
+    </div>
 </body>
 </html>
