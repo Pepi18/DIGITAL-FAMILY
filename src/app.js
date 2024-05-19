@@ -3,27 +3,36 @@ console.log('Hola NodeJS');
 import express from 'express'; 
 import ejs from 'ejs';
 import bodyParser from 'body-parser';
+import session from 'express-session'; // Importar express-session
 
-//Importamos para realizar conexión a la base de datos
+// Importamos para realizar conexión a la base de datos
 import { connectDB } from './db/db.js';
 
-//Cuidado con el SO de despliegue windows
-import {dirname, join} from 'path'
-import {fileURLToPath} from 'url';
+// Cuidado con el SO de despliegue windows
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-//importamos  nuestro enrutador
+// Importamos nuestro enrutador
 import indexRoutes from './routers/routers.js';
 
-//Importamos la variable de PORT para el servidor
-import {PORT} from './config.js';
+// Importamos la variable de PORT para el servidor
+import { PORT } from './config.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 console.log(__dirname);
 
-//inicio express y lo almaceno en app
+// Inicio express y lo almaceno en app
 const app = express();
 
-//Conexión a la base de datos
+// Configuración de express-session
+app.use(session({
+    secret: 'your-secret-key', // Cambia esto por una clave secreta segura
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Si usas HTTPS, cambia a true
+}));
+
+// Conexión a la base de datos
 async function startServer() {
     try {
         // Conectar a la base de datos
@@ -44,25 +53,18 @@ startServer();
 
 console.log('El servidor está escuchando por el puerto', PORT);
 
-//configuro body-parser
+// Configuro body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-//configurar motor de plantillas
+// Configurar motor de plantillas
 app.set('view engine', 'ejs');
-app.set('views',join(__dirname, 'views'));
+app.set('views', join(__dirname, 'views'));
 console.log(__dirname, 'views');
 
-//servir archivos estáticos
-app.use('/css', express.static(join(__dirname,'css')));
-app.use('/imagenes', express.static(join(__dirname,'imagenes')));
+// Servir archivos estáticos
+app.use('/css', express.static(join(__dirname, 'css')));
+app.use('/imagenes', express.static(join(__dirname, 'imagenes')));
 
-//usar enrutador
+// Usar enrutador
 app.use(indexRoutes);
-
-
-
-
-
-

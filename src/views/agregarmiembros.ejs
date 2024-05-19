@@ -22,7 +22,6 @@
     <div class="form-card1">
         <div class="form-card2">
             <form id="memberForm" class="form" action="/agregarmiembros/<%= tableName %>" method="post">
-                <!-- Elimina el campo oculto y agrega tableName directamente en la acción del formulario -->
                 <div class="form-field">
                     <input class="input-field" type="text" name="username" placeholder="Username" required="">
                 </div>
@@ -30,10 +29,11 @@
                     <input class="input-field" type="password" name="password" placeholder="Password" required="">
                 </div>
                 <button type="submit" class="sendMessage-btn">Agregar miembro</button>
-                <a href="/login" class="sendMessage-btn">Finalizar</a>
+                <a href="/finalizarInsercion/<%= tableName %>" class="sendMessage-btn">Finalizar</a>
             </form>
         </div>
     </div>
+    
        
     
     

@@ -12,10 +12,17 @@
     <h1><span class="text">DIGITAL FAMILY</span></h1>
     <br>
     <br>
-    <a  href="/registro" class="Btn">Registra tu familia</a>
+    <a href="/registro" class="Btn">Registra tu familia</a>
     <br>
     <br>
-    <a  href="/login" class="Btn">Inicio de sesión</a>
     
+    <form action="/login" method="get">
+        <div class="box-input">
+            <div class="border">
+              <input type="text" name="tableName" class="input" placeholder="Introduce el código de la familia:" required>
+            </div>
+          </div>
+        <button type="submit" class="Btn">Iniciar Sesión</button>
+    </form>
 </body>
 </html>

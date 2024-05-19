@@ -26,6 +26,19 @@ export const  chat=(req, res) => res.render ('chat', {title:"Chat"});
 export const  agregarmiembros=(req, res) => res.render ('agregarmiembros', {title:"agregarmiembros"});
 
 
+export const homeController = (req, res) => {
+    res.render('home', { title: "Home" });
+};
+
+export const loginRedirect = (req, res) => {
+    const { tableName } = req.query;
+    if (!tableName) {
+        return res.status(400).send('El nombre de la familia es obligatorio');
+    }
+    res.redirect(`/login/${tableName}`);
+};
+
+
 export const submitcontroller = async (req, res) => {
     try {
         const { username, email, password, familyname } = req.body;
@@ -118,26 +131,74 @@ export const insertarmiembros = async (req, res) => {
 };
 
 
-// Controlador para el inicio de sesión
-export const loginController = async (req, res) => {
-    const { username, password } = req.body;
+// Nuevo controlador para finalizar la inserción de miembros y redirigir a homeFamilia
+export const finalizarInsercion = (req, res) => {
+    const tableName = req.params.tableName;
+    res.redirect(`/homeFamilia/${tableName}`);
+};
 
-    // Verificar las credenciales consultando la base de datos
+
+
+export const loginRequired = (req, res) => {
+    // Verificar si req.session está definido y si tiene un mensaje de error
+    const errorMessage = (req.session && req.session.errorMessage) ? req.session.errorMessage : undefined;
+    
+    // Limpiar el mensaje de error de la sesión una vez que se haya mostrado
+    if (req.session && req.session.errorMessage) {
+        delete req.session.errorMessage;
+    }
+
+    const tableName = req.params.tableName; // Obtener tableName de los parámetros de la URL
+
+    res.render('login', { title: "login", errorMessage, tableName });
+};
+
+
+
+export const loginRequiredMiddleware = (req, res, next) => {
+    if (req.session && req.session.username) {
+        return next();
+    } else {
+        const tableName = req.params.tableName;
+        return res.redirect(`/login/${tableName}`);
+    }
+};
+
+
+
+
+export const loginController = async (req, res) => {
+    const { username, password} = req.body;
+    const tableName = req.params.tableName;
+
+    if (!tableName) {
+        return res.status(400).render('login', { errorMessage: 'Table name is required', title: 'Login', tableName: null });
+    }
+
     try {
-        const isAuthenticated = await verifyCredentials(username, password);
+        const isAuthenticated = await verifyCredentials(tableName, username, password);
 
         if (isAuthenticated) {
+            // Guardar el username y tableName en la sesión
+            req.session.username = username;
+            req.session.tableName = tableName;
+
             // Las credenciales son correctas, redirigir a la página de inicio de familia
-            return res.redirect(`/homeFamilia/${username}`);
+            return res.redirect(`/homeFamilia/${tableName}`);
         } else {
             // Usuario o contraseña incorrectos
-            return res.status(401).render('login', { errorMessage: 'Usuario o contraseña incorrectos', title: 'Login' });
+            return res.status(401).render('login', { errorMessage: 'Usuario o contraseña incorrectos', title: 'Login', tableName: null });
         }
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         return res.status(500).send('Error al iniciar sesión');
     }
 };
+
+
+
+
+
 
 
 
