@@ -22,43 +22,83 @@
       </li>
   <% } %>
   
+  <% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+    <!-- Opción del menú habilitada -->
     <li class="list-item">
-      <a href="/chat" class="chat item--js">
-        <span>Chat</span>
-        <img src="../../imagenes/mensaje.svg" alt="">
-      </a>
-      
+        <a href="/chat/<%= tableName %>" class="chat item--js">
+            <span>Chat</span>
+            <img src="../../imagenes/mensaje.svg" alt="">
+        </a>
     </li>
-    <li class="list-item">
-      <a href="/diario" class="diario item--js">
-        <span>Diario</span>
-        <img src="../../imagenes/diary.svg" alt="">
-        
-      </a>
-      
+<% } else { %>
+    <!-- Opción del menú deshabilitada (oculta) -->
+    <li class="list-item" style="display: none;">      
     </li>
-    <li class="list-item">
-      <a href="/calendario" class="Calendario item--js">
-        <span>Calendario</span>
-        <img src="../../imagenes/calendar.svg" alt="">
+<% } %>
+<% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+  <!-- Opción del menú habilitada -->
+  <li class="list-item">
+    <a href="/diario/<%= tableName %>" class="diario item--js">
+      <span>Diario</span>
+      <img src="../../imagenes/diary.svg" alt="">
       </a>
-    <li class="list-item">
-      <a href="/animo" class="animo item--js">
-        <span>Ánimo</span>
-        <img src="../../imagenes/smiley.svg" alt="">
+  </li>
+<% } else { %>
+  <!-- Opción del menú deshabilitada (oculta) -->
+  <li class="list-item" style="display: none;">      
+  </li>
+<% } %>
+<% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+  <!-- Opción del menú habilitada -->
+  <li class="list-item">
+    <a href="/calendario/<%= tableName %>" class="Calendario item--js">
+      <span>Calendario</span>
+      <img src="../../imagenes/calendar.svg" alt="">
       </a>
-    </li>
-    <li class="list-item">
-      <a href="/tareas" class="tareas item--js">
-        <span>Tareas</span>
-        <img src="../../imagenes/check.svg" alt="">
+  </li>
+<% } else { %>
+  <!-- Opción del menú deshabilitada (oculta) -->
+  <li class="list-item" style="display: none;">      
+  </li>
+<% } %>
+<% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+  <!-- Opción del menú habilitada -->
+  <li class="list-item">
+    <a href="/animo/<%= tableName %>" class="animo item--js">
+      <span>Ánimo</span>
+      <img src="../../imagenes/smiley.svg" alt="">
       </a>
-    </li>
-    <li class="list-item">
-      <a href="/logros" class="logros item--js">
-        <span>Logros</span>
-        <img src="../../imagenes/award.svg" alt="">
+  </li>
+<% } else { %>
+  <!-- Opción del menú deshabilitada (oculta) -->
+  <li class="list-item" style="display: none;">      
+  </li>
+<% } %>
+<% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+  <!-- Opción del menú habilitada -->
+  <li class="list-item">
+    <a href="/tareas/<%= tableName %>" class="tareas item--js">
+      <span>Tareas</span>
+      <img src="../../imagenes/check.svg" alt="">
       </a>
-    </li>
-  </ul>
+  </li>
+<% } else { %>
+  <!-- Opción del menú deshabilitada (oculta) -->
+  <li class="list-item" style="display: none;">      
+  </li>
+<% } %>
+<% if (typeof username !== 'undefined' && typeof tableName !== 'undefined') { %>
+  <!-- Opción del menú habilitada -->
+  <li class="list-item">
+    <a href="/logros/<%= tableName %>" class="logros item--js">
+      <span>Logros</span>
+      <img src="../../imagenes/award.svg" alt="">
+      </a>
+  </li>
+<% } else { %>
+  <!-- Opción del menú deshabilitada (oculta) -->
+  <li class="list-item" style="display: none;">      
+  </li>
+<% } %>
+ </ul>
 </header>

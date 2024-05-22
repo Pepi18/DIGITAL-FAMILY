@@ -4,13 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
     <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>
-    
+    <h1 class="text2" >Bienvenido al chat, <%= username %>!</h1>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <ul id="messages"></ul>
+    <form id="chat-form">
+        <input id="chat-input" autocomplete="off" placeholder="Escribe un mensaje..." />
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emojione@4.5.0/lib/js/emojione.min.js"></script>
+    <script>
+        const socket = io({
+            query: {
+                tableName: '<%= tableName %>',
+                username: '<%= username %>'
+            }
+        });
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat('es-ES', options).format(date);
+        }
+
+        function createMessageElement(msg, isSent) {
+            const item = document.createElement('li');
+            item.classList.add(isSent ? 'sent' : 'received');
+            item.innerHTML = `<strong>${msg.username}</strong> <span>[${formatDate(msg.fechamensaje)}]</span><br>${emojione.shortnameToImage(msg.contenidomensaje)}`;
+            return item;
+        }
+
+        socket.on('previousMessages', function(messages) {
+            messages.forEach((msg) => {
+                const item = createMessageElement(msg, msg.username === '<%= username %>');
+                document.getElementById('messages').appendChild(item);
+            });
+        });
+
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            if (input.value) {
+                socket.emit('chatMessage', input.value);
+                input.value = '';
+            }
+        });
+
+        socket.on('chatMessage', function(msg) {
+            const item = createMessageElement(msg, msg.username === '<%= username %>');
+            document.getElementById('messages').appendChild(item);
+        });
+    </script>
 </body>
 </html>

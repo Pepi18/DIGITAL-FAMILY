@@ -12,12 +12,12 @@ router.get ('/', home);
 router.get('/login', loginRedirect);
 router.get('/login/:tableName', loginRequired);
 router.get ('/registro', registro);
-router.get('/calendario', calendario, loginRequiredMiddleware);
-router.get('/chat', chat, loginRequiredMiddleware);
-router.get('/diario', diario, loginRequiredMiddleware);
-router.get('/animo', animo, loginRequiredMiddleware);
-router.get('/tareas', tareas, loginRequiredMiddleware);
-router.get('/logros', logros, );
+router.get('/calendario/:tableName', loginRequiredMiddleware, calendario);
+router.get('/chat/:tableName', loginRequiredMiddleware, chat);
+router.get('/diario/:tableName', loginRequiredMiddleware, diario);
+router.get('/animo/:tableName', loginRequiredMiddleware, animo);
+router.get('/tareas/:tableName', loginRequiredMiddleware, tareas);
+router.get('/logros/:tableName', loginRequiredMiddleware, logros, );
 router.get('/homeFamilia/:tableName', loginRequiredMiddleware, homeFamiliaController);
 router.get('/agregarmiembros/:tableName', (req, res) => {
     const tableName = req.params.tableName;

@@ -28,6 +28,11 @@ a {
 /* Start Style*/
 .main__menu {
   display: grid;
+  position: fixed; /* Hacer que el menú sea fijo */
+  top: 0; /* Fijar el menú en la parte superior */
+  left: 0;
+  width: 100%; /* Ancho completo del menú */
+  z-index: 1000; /* Asegura que el menú esté encima de otros elementos */
   grid-template-columns: repeat(8, 1fr); }
   @media (max-width: 900px) {
     .main__menu {
@@ -155,7 +160,7 @@ a {
     @import url('https://fonts.googleapis.com/css2?family=Almendra+SC&family=Alumni+Sans+Inline+One:ital@0;1&family=Angkor&family=Anta&family=Arbutus&family=Audiowide&display=swap');
     .text {
       position: absolute;
-      bottom: 65%; 
+      bottom: 70%; 
       right: 30%;
       font-family:"Audiowide", sans-serif;
       font-size: 3em;
@@ -422,11 +427,131 @@ a {
 
 .input::placeholder {
   transition: all 0.5s ease-in, transform 0.2s ease-in 0.6s;
+  text-align: center;
 }
 
 .input:focus::placeholder {
   padding-left: 165px;
   transform: translateY(-50px);
+}
+
+.gradient-multiline {
+  position: absolute;
+  left: 10px; ;
+  width: 500px;
+  margin: 2px auto;
+  background-color: rgb(151, 95, 255);
+  text-align: center;
+  line-height: 1.2em;
+  overflow:hidden;
+}
+  
+.gradient-multiline span {
+  color: #fff;
+  background-color: #000;
+
+  padding: 0.205rem 0.8rem;
+
+  /* Needs prefixing */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@supports(mix-blend-mode: lighten) {
+  
+  .gradient-multiline::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background: linear-gradient(60deg, #5140eb, #140118);
+
+    mix-blend-mode: lighten;
+  }
+  
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#messages li {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  max-width: 60%;
+  word-wrap: break-word;
+  position: relative;
+  clear: both;
+  border-radius: 10px;
+}
+
+#messages li.sent {
+  background-color: #b1f3ea;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+#messages li.received {
+  background-color: #f1b6ef;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+#messages li.sent::after, #messages li.received::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+#messages li.sent::after {
+  border: 10px solid transparent;
+  border-left-color: #2fd6c0;
+  border-right: 0;
+  border-bottom: 0;
+  right: -10px;
+  top: 10px;
+}
+
+#messages li.received::after {
+  border: 10px solid transparent;
+  border-right-color: #9e1490;
+  border-left: 0;
+  border-bottom: 0;
+  left: -10px;
+  top: 10px;
+}
+
+/* Estilo para el formulario del chat */
+#chat-form {
+  display: flex;
+  margin-top: 20px;
+}
+
+#chat-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #e38fee;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #b003db;
+  color: white;
+  border-radius: 20px;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 
