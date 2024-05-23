@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojionearea@3.4.2/dist/emojionearea.min.css">
 </head>
 <body>
     <%- include('partials/navigation')%>
-    <h1 class="text2" >Bienvenido al chat, <%= username %>!</h1>
+    <h1 class="text2">Bienvenido al chat, <%= username %>!</h1>
     <br><br><br><br><br><br><br><br><br><br><br><br>
-    <ul id="messages"></ul>
+    <ul id="messages" class="chat-messages"></ul>
     <form id="chat-form">
-        <input id="chat-input" autocomplete="off" placeholder="Escribe un mensaje..." />
-        <button type="submit">Enviar</button>
+        <textarea id="chat-input" placeholder="Escribe un mensaje..."></textarea>
+        <button id="send-button" type="button">Enviar</button> <!-- Cambiado a tipo "button" -->
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emojione@4.5.0/lib/js/emojione.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emojionearea@3.4.2/dist/emojionearea.min.js"></script>
     <script>
         const socket = io({
             query: {
@@ -26,39 +28,53 @@
             }
         });
 
+        $(document).ready(function() {
+            const emojiEditor = $('#chat-input').emojioneArea({
+                events: {
+                    keyup: function (editor, event) {
+                        if (event.which === 13) { // Enter key
+                            sendMessage(editor.html()); // Llama a la función sendMessage con el mensaje del editor
+                            editor.data('emojioneArea').setText(''); // Restablecer el contenido del editor emoji
+                        }
+                    }
+                }
+            });
+
+            $('#send-button').click(function() { // Agregué un listener para el click en el botón de enviar
+                const message = $('#chat-input').val();
+                sendMessage(message);
+                emojiEditor.data('emojioneArea').setText(''); // Restablecer el contenido del editor emoji
+            });
+
+            socket.on('previousMessages', function(messages) {
+                messages.forEach((msg) => {
+                    addMessageToChat(msg);
+                });
+            });
+
+            socket.on('chatMessage', function(msg) {
+                addMessageToChat(msg);
+            });
+        });
+
+        function sendMessage(message) {
+            if (message.trim() !== '') {
+                socket.emit('chatMessage', message);
+            }
+        }
+
+        function addMessageToChat(msg) {
+            const messageElement = `<li class="${msg.username === '<%= username %>' ? 'sent' : 'received'}">
+                                        <strong>${msg.username}</strong> [${formatDate(msg.fechamensaje)}]<br>${msg.contenidomensaje}
+                                    </li>`;
+            $('.chat-messages').append(messageElement);
+        }
+
         function formatDate(dateString) {
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             const date = new Date(dateString);
             return new Intl.DateTimeFormat('es-ES', options).format(date);
         }
-
-        function createMessageElement(msg, isSent) {
-            const item = document.createElement('li');
-            item.classList.add(isSent ? 'sent' : 'received');
-            item.innerHTML = `<strong>${msg.username}</strong> <span>[${formatDate(msg.fechamensaje)}]</span><br>${emojione.shortnameToImage(msg.contenidomensaje)}`;
-            return item;
-        }
-
-        socket.on('previousMessages', function(messages) {
-            messages.forEach((msg) => {
-                const item = createMessageElement(msg, msg.username === '<%= username %>');
-                document.getElementById('messages').appendChild(item);
-            });
-        });
-
-        document.getElementById('chat-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            if (input.value) {
-                socket.emit('chatMessage', input.value);
-                input.value = '';
-            }
-        });
-
-        socket.on('chatMessage', function(msg) {
-            const item = createMessageElement(msg, msg.username === '<%= username %>');
-            document.getElementById('messages').appendChild(item);
-        });
     </script>
 </body>
 </html>
