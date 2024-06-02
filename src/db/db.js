@@ -34,7 +34,6 @@ export async function createFamilyTable(db, tableName) {
                 contenidoanimo TEXT,
                 fechamensaje TEXT,
                 contenidomensaje TEXT,
-                mensajeleido INTEGER,
                 tarea TEXT,
                 tareacompletada INTEGER,
                 descripcionlogro TEXT,
@@ -50,10 +49,6 @@ export async function createFamilyTable(db, tableName) {
         throw error;
     }
 }
-
-
-
-
 
 
 export async function insertDataIntoTable(db, tableName, data) {
@@ -122,92 +117,94 @@ export const verifyCredentials = async (tableName, username, password) => {
     }
 };
 
-
-
-
-
-
-
-//Buscar post en la base de datos pos título
-export const searchPostsInDatabase = async (titulo) => {
-    const database = 'userlogin';
-    const query = 'SELECT * FROM posts WHERE titulo LIKE ?'; // Consulta para buscar publicaciones por título
-    
+export async function insertDiarioEntry(tableName, username, fechadiario, contenido) {
     try {
-        // Ejecutar la consulta SQL con el título proporcionado
-        await pool.query(`USE ${database}`);
-        const [datos, _] = await pool.query(query, [`%${titulo}%`]);
-        console.log('Posts encontrados:', datos);
-        return datos; // Devolver los resultados de la búsqueda
+        const db = await connectDB();
+
+        await db.run(`
+            INSERT INTO ${tableName} (username, fechadiario, contenidodiario)
+            VALUES (?, ?, ?)
+        `, [username, fechadiario, contenido]);
+
+        console.log('Entrada del diario insertada correctamente');
     } catch (error) {
-        console.error('Error al buscar publicaciones por título en la base de datos:', error);
+        console.error('Error al insertar la entrada del diario:', error);
         throw error;
     }
-};
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Guardar post en la base de datos
-export const createpost = async (titulo, texto) => {
-    const database = 'userlogin'; 
-    const query = 'INSERT INTO posts (titulo, texto) VALUES (?, ?)';
+export async function getDiarioEntries(tableName, username) {
     try {
-        await pool.query(`USE ${database}`);
-        const [result] = await pool.query(query, [titulo, texto]);
-        console.log('Post guardado correctamente:', result);
+        const db = await connectDB();
+
+        const result = await db.all(`
+            SELECT * FROM ${tableName} WHERE username = ? AND contenidodiario IS NOT NULL ORDER BY fechadiario DESC
+        `, [username]);
+
         return result;
     } catch (error) {
-        console.error('Error al guardar el post:', error);
+        console.error('Error al obtener las entradas del diario:', error);
         throw error;
     }
-};
+}
 
-
-//Borrar registro de la base de datos
-export const deleteRecord= async (id) => {
-    const database = 'userlogin';
-    const query = 'DELETE FROM posts WHERE id = ?'; // Consulta para eliminar un registro por su ID
-    
+export async function getCalendarEvents(tableName, year) {
     try {
-        // Ejecutar la consulta SQL con el ID proporcionado
-        await pool.query(`USE ${database}`);
-        const [result, _] = await pool.query(query, [id]);
-        console.log('Registro eliminado correctamente');
-        return result; // Devolver el resultado de la operación de eliminación
+        const db = await connectDB();
+        const startDate = `${year}-01-01`;
+        const endDate = `${year}-12-31`;
+
+        const query = `
+            SELECT * FROM ${tableName} 
+            WHERE fechainicioevento BETWEEN ? AND ?
+        `;
+
+        const events = await db.all(query, [startDate, endDate]);
+        return events;
     } catch (error) {
-        console.error('Error al eliminar el registro:', error);
+        console.error('Error al obtener los eventos del calendario:', error);
         throw error;
     }
-};
+}
+
+export async function insertCalendarEvent(tableName, username, date, title, description) {
+    try {
+        const db = await connectDB();
+        await db.run(`
+            INSERT INTO ${tableName} (username, fechainicioevento, tituloevento, descripcionevento)
+            VALUES (?, ?, ?, ?)
+        `, [username, date, title, description]);
+
+        console.log('Evento insertado correctamente en la tabla', tableName);
+    } catch (error) {
+        console.error('Error al insertar el evento en la tabla:', error);
+        throw error;
+    }
+}
+
+export async function getEventsForYear(tableName, year) {
+    const db = await connectDB();
+    const startDate = `${year}-01-01`;
+    const endDate = `${year}-12-31`;
+    const events = await db.all(
+        `SELECT tituloevento, descripcionevento, fechainicioevento FROM ${tableName} 
+        WHERE fechainicioevento BETWEEN ? AND ?`,
+        [startDate, endDate]
+    );
+    return events;
+}
+
+export async function addEventToCalendar(tableName, date, title, description) {
+    const db = await connectDB();
+    await db.run(
+        `INSERT INTO ${tableName} (tituloevento, descripcionevento, fechainicioevento) 
+        VALUES (?, ?, ?)`,
+        [title, description, date]
+    );
+}
+
+
+
+
+
+

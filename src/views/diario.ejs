@@ -4,13 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
-    <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>
-    
+    <%- include('partials/navigation') %>
+    <h1 class="text2">Este es tu diario, <%= username %>!</h1>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <form id="diario-form">
+        <textarea id="diario-input" placeholder="Escribe tu entrada..."></textarea>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <h2>Tus entradas</h2>
+    <div id="entradas-diario">
+        <% entries.forEach(entry => { %>
+            <div class="entry">
+                <strong><%= entry.fechadiario %></strong><br>
+                <%= entry.contenidodiario %>
+            </div>
+        <% }) %>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#diario-form').submit(function(event) {
+                event.preventDefault();
+                const contenido = $('#diario-input').val().trim();
+
+                if (contenido) {
+                    $.ajax({
+                        url: '/guardarDiario',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            contenido: contenido
+                        }),
+                        success: function(response) {
+                            // Crear un nuevo elemento para la entrada del diario
+                            const nuevaEntrada = `
+                                <div class="entry">
+                                    <strong>${response.fechadiario}</strong><br>
+                                    ${response.contenidodiario}
+                                </div>
+                            `;
+                            // Agregar la nueva entrada al inicio del contenedor de entradas
+                            $('#entradas-diario').prepend(nuevaEntrada);
+                            // Limpiar el campo de texto
+                            $('#diario-input').val('');
+                        }
+                    });
+                } else {
+                    alert("El contenido del diario no puede estar vacío");
+                }
+            });
+        });
+    </script>
 </body>
 </html>

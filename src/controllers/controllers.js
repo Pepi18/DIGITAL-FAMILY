@@ -1,6 +1,8 @@
-import {createpost,verifyCredentials, searchPostsInDatabase, deleteRecord, connectDB, createFamilyTable, insertDataIntoTable,insertMemberIntoTable, getFamilyNameByTableName} from '../db/db.js';
+import {verifyCredentials, connectDB, createFamilyTable, insertDataIntoTable, insertMemberIntoTable, getFamilyNameByTableName, 
+insertDiarioEntry, getDiarioEntries, getCalendarEvents, insertCalendarEvent, getEventsForYear, addEventToCalendar} from '../db/db.js';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { format } from 'date-fns';
 
 //Controladores para las distintas url
     export const home=(req, res) => res.render ('home', {title:"home"});
@@ -41,18 +43,29 @@ import { open } from 'sqlite';
         res.render('calendario', { title, tableName, username });
     };
 
-    export const diario = (req, res) => {
+    export const diario = async (req, res) => {
         const username = req.session.username;
         const tableName = req.params.tableName;
         const title = "Diario";
-
+    
         if (!username) {
             return res.redirect(`/login/${tableName}`);
         }
-
-        res.render('diario', { title, tableName, username });
+    
+        try {
+            const entries = await getDiarioEntries(tableName, username);
+            // Formatear las fechas
+            const formattedEntries = entries.map(entry => ({
+                ...entry,
+                fechadiario: format(new Date(entry.fechadiario), 'yyyy-MM-dd')
+            }));
+            res.render('diario', { title, tableName, username, entries: formattedEntries });
+        } catch (error) {
+            console.error('Error al obtener las entradas del diario:', error);
+            res.status(500).send('Error al obtener las entradas del diario.');
+        }
     };
-
+    
     export const tareas = (req, res) => {
         const username = req.session.username;
         const tableName = req.params.tableName;
@@ -149,15 +162,26 @@ import { open } from 'sqlite';
             const tableName = req.params.tableName;
             const username = req.session.username; // Obtener el tableName de los parámetros de la URL
             const familyname = await getFamilyNameByTableName(tableName); // Obtener el familyname asociado al tableName
-
+    
+            // Obtener eventos del calendario
+            const year = new Date().getFullYear();
+            const eventos = await getEventsForYear(tableName, year);
+    
             // Definir el título para la página
             const title = 'Página de inicio de la familia';
-
+    
             // Generar el enlace a la página agregarmiembros
             const agregarMiembrosLink = `/agregarmiembros/${tableName}`;
-
+    
             // Renderizar la página homeFamilia y pasar el enlace a la plantilla
-            res.render('homeFamilia', { title: title, familyname: familyname, tableName: tableName, agregarMiembrosLink: agregarMiembrosLink, username: username });
+            res.render('homeFamilia', {
+                title: title,
+                familyname: familyname,
+                tableName: tableName,
+                agregarMiembrosLink: agregarMiembrosLink,
+                username: username,
+                eventos: eventos
+            });
         } catch (error) {
             console.error('Error al procesar la solicitud de homeFamilia:', error);
             res.status(500).send('Error al procesar la solicitud de homeFamilia');
@@ -266,6 +290,91 @@ import { open } from 'sqlite';
 
 
 
+    export const guardarDiario = async (req, res) => {
+        const { contenido } = req.body;
+        const username = req.session.username;
+        const fechadiario = new Date().toISOString();
+        const tableName = req.session.tableName;
+    
+        try {
+            await insertDiarioEntry(tableName, username, fechadiario, contenido);
+            // Devolver la entrada recién guardada con la fecha formateada
+            res.json({
+                username,
+                fechadiario: format(new Date(fechadiario), 'yyyy-MM-dd'),
+                contenidodiario: contenido
+            });
+        } catch (error) {
+            console.error('Error al guardar la entrada del diario:', error);
+            res.status(500).json({ message: 'Error al guardar la entrada del diario.' });
+        }
+    };
+    
+
+    export const calendarioController = async (req, res) => {
+        try {
+            const tableName = req.params.tableName;
+            let year = parseInt(req.query.year) || new Date().getFullYear();
+            console.log(`Table: ${tableName}, Year: ${year}`); // Añadir log para depuración
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth() + 1;
+            const currentDay = currentDate.getDate();
+            const currentYear = currentDate.getFullYear(); // Obtener el año actual
+        
+            const eventos = await getCalendarEvents(tableName, year);
+        
+            const months = [
+                { name: "Enero", days: 31 },
+                { name: "Febrero", days: year % 4 === 0 ? 29 : 28 },
+                { name: "Marzo", days: 31 },
+                { name: "Abril", days: 30 },
+                { name: "Mayo", days: 31 },
+                { name: "Junio", days: 30 },
+                { name: "Julio", days: 31 },
+                { name: "Agosto", days: 31 },
+                { name: "Septiembre", days: 30 },
+                { name: "Octubre", days: 31 },
+                { name: "Noviembre", days: 30 },
+                { name: "Diciembre", days: 31 }
+            ];
+    
+            // Obtener el nombre de usuario de la sesión si está definido, de lo contrario, establecerlo como undefined
+            const username = req.session.username || undefined;
+    
+            res.render('calendario', {
+                title: 'Calendario Familiar',
+                tableName: tableName,
+                year: year,
+                currentMonth: currentMonth,
+                currentDay: currentDay,
+                currentYear: currentYear, // Pasar el año actual a la plantilla
+                months: months,
+                eventos: eventos,
+                username: username // Pasar el nombre de usuario a la vista
+            });
+        } catch (error) {
+            console.error('Error al cargar el calendario:', error);
+            res.status(500).send('Error al cargar el calendario');
+        }
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    export const addEventController = async (req, res) => {
+        try {
+            const { tableName, title, description, date } = req.body;
+            await addEventToCalendar(tableName, date, title, description);
+            res.status(200).send('Event added successfully!');
+        } catch (error) {
+            console.error('Error al agregar el evento:', error);
+            res.status(500).send('Error al agregar el evento');
+        }
+    };
 
 
 
@@ -314,48 +423,9 @@ import { open } from 'sqlite';
 
 
 
-//Controlador para el post
-export const postcontroller = async (req, res) => {
-    console.log(req.body); 
-    const { titulo, texto } = req.body;
-
-    try {
-        await createpost(titulo, texto);
-        res.redirect('/post');
-    } catch (error) {
-        console.error('Error al guardar el post:', error);
-        res.status(500).send('Error al guardar el post');
-    }
-};
 
 
 
-//Controlador para la búsqueda en la tabla posts
-export const searchPosts = async (req, res) => {
-    try {
-        const { titulo } = req.query;
-        // Realizar la consulta para buscar las publicaciones por título
-        const datos = await searchPostsInDatabase(titulo);
-        console.log('Posts obtenidos del controlador:', datos); // Añadir este console.log para verificar posts
-
-        // Renderizar la vista de 'search' con los resultados de la búsqueda
-        res.render('search', { titulo: 'Resultados de la búsqueda', datos: datos });
-    } catch (error) {
-        console.error('Error al buscar publicaciones por título:', error);
-        res.status(500).send('Error al buscar publicaciones por título');
-    }
-};
-export const eliminarRegistro = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        await deleteRecord(id);
-        res.sendStatus(200); // Enviar respuesta de éxito
-    } catch (error) {
-        console.error('Error al eliminar el registro:', error);
-        res.sendStatus(500); // Enviar respuesta de error del servidor
-    }
-};
 
 
 

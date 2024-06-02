@@ -4,13 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
 </head>
 <body>
-    <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>
+    <%- include('partials/navigation') %>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
     
+    <section class='wrapper'>
+        <div class="navigate-buttons">
+            <span ><%= year %></span>
+            
+            <button class="Btn" id="prevYear">Año Anterior</button>
+            
+            <button class="Btn" id="nextYear">Año Siguiente</button>
+        </div>
+        <script>
+            $(document).ready(function() {
+                $('#prevYear').click(function() {
+                    const year = <%= year %> - 1;
+                    const tableName = '<%= tableName %>';
+                    window.location.href = `/calendario/${tableName}?year=${year}`;
+                });
+
+                $('#nextYear').click(function() {
+                    const year = <%= year %> + 1;
+                    const tableName = '<%= tableName %>';
+                    window.location.href = `/calendario/${tableName}?year=${year}`;
+                });
+
+                // Resto del código JavaScript...
+            });
+        </script>
+        <div class="current-date">
+            <h2 class="text2"><%= username %>, hoy es: <%= currentDay %> de <%= months[currentMonth - 1].name %> de <%= currentYear %></h2>
+        </div>
+        <div class="calendar">
+            <% for (let i = 0; i < months.length; i++) { %>
+                <div class="month">
+                    <h3><%= months[i].name %></h3>
+                    <% const daysOfWeek = ['L', 'M', 'X', 'J', 'V', 'S', 'D']; %>
+                    <div class="days-of-week">
+                        <% for (let dayOfWeek = 0; dayOfWeek < daysOfWeek.length; dayOfWeek++) { %>
+                            <div class="day-of-week">
+                                <%= daysOfWeek[dayOfWeek] %>
+                            </div>
+                        <% } %>
+                    </div>
+                    <div class="days">
+                        <% const firstDayOfMonth = new Date(year, i, 1).getDay(); %>
+                        <% const startingDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; %>
+                        <% for (let j = 0; j < startingDay; j++) { %>
+                            <div class="day empty"></div>
+                        <% } %>
+                        <% for (let day = 1; day <= months[i].days; day++) { %>
+                            <div class="day" data-date="<%= `${year}-${String(i+1).padStart(2, '0')}-${String(day).padStart(2, '0')}` %>">
+                                <%= day %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Modal for adding event -->
+        <div id="eventModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="eventForm">
+                    <input type="hidden" id="eventDate" name="date">
+                    <label for="title">Título del evento:</label>
+                    <input type="text" id="title" name="title" required>
+                    <label for="description">Descripción del evento:</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <button type="submit">Agregar evento</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        $(document).ready(function() {
+            $('#prevYear').click(function() {
+                const year = <%= year %> - 1;
+                const tableName = '<%= tableName %>';
+                window.location.href = `/calendario/${tableName}?year=${year}`;
+            });
+
+            $('#nextYear').click(function() {
+                const year = <%= year %> + 1;
+                const tableName = '<%= tableName %>';
+                window.location.href = `/calendario/${tableName}?year=${year}`;
+            });
+
+            $('.day').click(function() {
+                const date = $(this).data('date');
+                $('#eventDate').val(date);
+                $('#eventModal').show();
+            });
+
+            $('.close').click(function() {
+                $('#eventModal').hide();
+            });
+
+            $('#eventForm').submit(function(e) {
+                e.preventDefault();
+                const tableName = '<%= tableName %>';
+                const title = $('#title').val();
+                const description = $('#description').val();
+                const date = $('#eventDate').val();
+
+                $.ajax({
+                    url: '/addEvent',
+                    type: 'POST',
+                    data: {
+                        tableName: tableName,
+                        title: title,
+                        description: description,
+                        date: date
+                    },
+                    success: function() {
+                        alert('Event added successfully!');
+                        location.reload();
+                    },
+                    error: function() {
+                        alert('Error adding event');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
