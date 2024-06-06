@@ -4,8 +4,10 @@ import { Router } from 'express';
 import {
     home, loginRequiredMiddleware, registro, chat, diario, animo, tareas,
     logros, homeFamiliaController, loginRequired, insertarmiembros, submitcontroller,
-    loginController, loginRedirect, finalizarInsercion, guardarDiario, calendarioController, addEventController
+    loginController, loginRedirect, finalizarInsercion, guardarDiario, calendarioController, addEventController,
+    tareasController, logrosController, saveTareaController, completarTareaController
 } from '../controllers/controllers.js';
+import { saveAnimo, getRecentAnimos } from '../db/db.js';
 
 const router = Router();
 
@@ -17,8 +19,8 @@ router.get('/calendario/:tableName', loginRequiredMiddleware, calendarioControll
 router.get('/chat/:tableName', loginRequiredMiddleware, chat);
 router.get('/diario/:tableName', loginRequiredMiddleware, diario);
 router.get('/animo/:tableName', loginRequiredMiddleware, animo);
-router.get('/tareas/:tableName', loginRequiredMiddleware, tareas);
-router.get('/logros/:tableName', loginRequiredMiddleware, logros);
+router.get('/tareas/:tableName', loginRequiredMiddleware, tareasController);
+router.get('/logros/:tableName', loginRequiredMiddleware, logrosController);
 router.get('/homeFamilia/:tableName', loginRequiredMiddleware, homeFamiliaController);
 router.get('/agregarmiembros/:tableName', (req, res) => {
     const tableName = req.params.tableName;
@@ -35,5 +37,36 @@ router.post('/homeFamilia', submitcontroller);
 router.post('/login/:tableName', loginController);
 router.post('/guardarDiario', loginRequiredMiddleware, guardarDiario);
 router.post('/addEvent', loginRequiredMiddleware, addEventController);
+router.post('/guardar-animo/:tableName', loginRequiredMiddleware, async (req, res) => {
+    try {
+        const tableName = req.params.tableName;
+        const username = req.session.username;
+        const { contenidoanimo } = req.body;
+        const fechaanimo = new Date().toISOString();
+
+        await saveAnimo(tableName, username, contenidoanimo, fechaanimo);
+
+        // Obtener el último estado de ánimo del usuario
+        const recentAnimos = await getRecentAnimos(tableName);
+        const estadoAnimo = recentAnimos.find(user => user.username === username);
+
+        res.render('animo', {
+            title: 'Estado de Ánimo',
+            username,
+            tableName,
+            estadoAnimo // Asegúrate de pasar estadoAnimo a la vista
+        });
+    } catch (error) {
+        console.error('Error al guardar el estado de ánimo:', error);
+        res.status(500).send('Error al guardar el estado de ánimo');
+    }
+});
+router.post('/guardar-tarea/:tableName', loginRequiredMiddleware, saveTareaController);
+router.post('/completar-tarea/:tableName/:tareaId', loginRequiredMiddleware, completarTareaController);
+
+
+
+
 
 export default router;
+

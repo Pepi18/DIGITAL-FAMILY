@@ -4,12 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
-    <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>    
+    <%- include('partials/navigation') %>
+    <h1 class="text2">Estás en tareas, <%= username %></h1>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <form action="/guardar-tarea/<%= tableName %>" method="post">
+        <label for="tarea">Tarea:</label>
+        <input type="text" id="tarea" name="tarea" required>
+        <label for="username">Asignar a:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="fechafintarea">Fecha límite:</label>
+        <input type="date" id="fechafintarea" name="fechafintarea" required>
+        <button type="submit">Añadir Tarea</button>
+    </form>
+    <h2>Lista de Tareas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Tarea</th>
+                <th>Fecha Límite</th>
+                <th>Completada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% tareas.forEach(tarea => { %>
+                <tr>
+                    <td><%= tarea.username %></td>
+                    <td><%= tarea.tarea %></td>
+                    <td><%= new Date(tarea.fechafintarea).toLocaleDateString() %></td>
+                    <td>
+                        <% if (tarea.tareacompletada === 0) { %>
+                            <form action="/completar-tarea/<%= tableName %>/<%= tarea.id %>" method="post">
+                                <button type="submit">Completar</button>
+                            </form>
+                        <% } else { %>
+                            Completada
+                        <% } %>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 </body>
 </html>

@@ -24,6 +24,7 @@ export async function createFamilyTable(db, tableName) {
         // Crear la tabla si el nombre de la tabla no está en uso
         await db.exec(`
             CREATE TABLE IF NOT EXISTS ${tableName} (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
                 email TEXT,
                 password TEXT,
@@ -34,6 +35,8 @@ export async function createFamilyTable(db, tableName) {
                 contenidoanimo TEXT,
                 fechamensaje TEXT,
                 contenidomensaje TEXT,
+                mensajeleido INTEGER,
+                fechafintarea TEXT,
                 tarea TEXT,
                 tareacompletada INTEGER,
                 descripcionlogro TEXT,
@@ -204,7 +207,98 @@ export async function addEventToCalendar(tableName, date, title, description) {
 }
 
 
+export const saveAnimo = async (tableName, username, contenidoanimo, fechaanimo) => {
+    const db = await connectDB();
+    const query = `
+        INSERT INTO ${tableName} (username, contenidoanimo, fechaanimo)
+        VALUES (?, ?, ?)
+    `;
+    const values = [username, contenidoanimo, fechaanimo];
+
+    await db.run(query, values);
+};
 
 
 
+export const getRecentAnimos = async (tableName) => {
+    try {
+        const db = await connectDB();
+        const query = `
+            SELECT username, contenidoanimo, MAX(fechaanimo) AS ultima_fecha
+            FROM ${tableName}
+            WHERE contenidoanimo IS NOT NULL
+            GROUP BY username
+            ORDER BY ultima_fecha DESC
+        `;
+        const result = await db.all(query);
+        return result;
+    } catch (error) {
+        console.error('Error al obtener los estados de ánimo recientes:', error);
+        throw error;
+    }
+};
+
+
+// Función para guardar una nueva tarea
+export const saveTarea = async (tableName, username, tarea, fechafintarea) => {
+    const db = await connectDB();
+    const query = `
+        INSERT INTO ${tableName} (username, tarea, fechafintarea, tareacompletada, logroconseguido, descripcionlogro)
+        VALUES (?, ?, ?, 0, 0, NULL)
+    `;
+    const values = [username, tarea, fechafintarea];
+
+    await db.run(query, values);
+};
+
+// Función para obtener todas las tareas
+export const getTareas = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        SELECT id, username, tarea, fechafintarea, tareacompletada
+        FROM ${tableName}
+        WHERE tarea IS NOT NULL
+        ORDER BY fechafintarea ASC
+    `;
+    const result = await db.all(query);
+    return result;
+};
+
+// Función para marcar una tarea como completada
+export const completarTarea = async (tableName, tareaId) => {
+    const db = await connectDB();
+    const query = `
+        UPDATE ${tableName}
+        SET tareacompletada = 1,
+            descripcionlogro = 'Logro conseguido: ' || tarea,
+            logroconseguido = '+1 punto'
+        WHERE id = ?
+    `;
+    await db.run(query, [tareaId]);
+};
+
+// Función para actualizar las tareas no completadas
+export const actualizarTareasNoCompletadas = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        UPDATE ${tableName}
+        SET tareacompletada = 'Logro NO conseguido: ' || tarea,
+            descripcionlogro = 'Logro NO conseguido: ' || tarea
+        WHERE fechafintarea < date('now') AND tareacompletada = 0
+    `;
+    await db.run(query);
+};
+
+// Función para obtener logros
+export const getLogros = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        SELECT username, SUM(logroconseguido = '+1 punto') AS puntos
+        FROM ${tableName}
+        GROUP BY username
+        ORDER BY puntos DESC
+    `;
+    const result = await db.all(query);
+    return result;
+};
 

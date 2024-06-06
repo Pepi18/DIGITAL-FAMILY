@@ -4,13 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
-    <%- include('partials/navigation')%>
-    <section class='wrapper'>
-        
-    </section>
-    
+    <%- include('partials/navigation', {tableName: tableName }) %>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <h1 class="text2">Mira los logros de tu familia, <%= username %></h1>
+    <h2>Logros</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% logros.forEach(logro => { %>
+                <tr>
+                    <td><%= logro.username %></td>
+                    <td><%= logro.puntos %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 </body>
 </html>

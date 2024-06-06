@@ -650,3 +650,7 @@ button {
 .navigate-buttons button {
   margin: 0 10px;
 }
+.day.event {
+  background-color: rgb(151, 95, 255); /* Cambia este color según tu preferencia */
+  color: white;
+}

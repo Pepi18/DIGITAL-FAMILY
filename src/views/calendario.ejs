@@ -6,7 +6,6 @@
     <title><%= title %></title>
     <link rel="stylesheet" type="text/css" href="../css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
 </head>
 <body>
     <%- include('partials/navigation') %>
@@ -14,10 +13,8 @@
     
     <section class='wrapper'>
         <div class="navigate-buttons">
-            <span ><%= year %></span>
-            
+            <span> Estas visualizando el calendario del año: <%= year %></span>
             <button class="Btn" id="prevYear">Año Anterior</button>
-            
             <button class="Btn" id="nextYear">Año Siguiente</button>
         </div>
         <script>
@@ -33,8 +30,6 @@
                     const tableName = '<%= tableName %>';
                     window.location.href = `/calendario/${tableName}?year=${year}`;
                 });
-
-                // Resto del código JavaScript...
             });
         </script>
         <div class="current-date">
@@ -59,7 +54,11 @@
                             <div class="day empty"></div>
                         <% } %>
                         <% for (let day = 1; day <= months[i].days; day++) { %>
-                            <div class="day" data-date="<%= `${year}-${String(i+1).padStart(2, '0')}-${String(day).padStart(2, '0')}` %>">
+                            <% const currentDate = new Date(year, i, day); %>
+                            <% const dateString = `${year}-${String(i+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; %>
+                            <% const event = eventos.find(evento => evento.fechainicioevento === dateString); %>
+                            <% const hasEvent = event !== undefined; %>
+                            <div class="day <%= hasEvent ? 'event' : '' %>" data-date="<%= dateString %>" title="<%= hasEvent ? event.tituloevento : '' %>">
                                 <%= day %>
                             </div>
                         <% } %>

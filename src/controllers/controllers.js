@@ -1,5 +1,6 @@
 import {verifyCredentials, connectDB, createFamilyTable, insertDataIntoTable, insertMemberIntoTable, getFamilyNameByTableName, 
-insertDiarioEntry, getDiarioEntries, getCalendarEvents, insertCalendarEvent, getEventsForYear, addEventToCalendar} from '../db/db.js';
+insertDiarioEntry, getDiarioEntries, getCalendarEvents, insertCalendarEvent, saveAnimo, getRecentAnimos, getEventsForYear, addEventToCalendar,
+saveTarea, getTareas, completarTarea, actualizarTareasNoCompletadas, getLogros} from '../db/db.js';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { format } from 'date-fns';
@@ -23,13 +24,14 @@ import { format } from 'date-fns';
         const username = req.session.username;
         const tableName = req.params.tableName;
         const title = "Estado de ánimo";
-
+    
         if (!username) {
             return res.redirect(`/login/${tableName}`);
         }
-
+    
         res.render('animo', { title, tableName, username });
     };
+    
 
     export const calendario = (req, res) => {
         const username = req.session.username;
@@ -157,36 +159,45 @@ import { format } from 'date-fns';
         }
     };
 
+    
     export const homeFamiliaController = async (req, res) => {
-        try {
-            const tableName = req.params.tableName;
-            const username = req.session.username; // Obtener el tableName de los parámetros de la URL
-            const familyname = await getFamilyNameByTableName(tableName); // Obtener el familyname asociado al tableName
-    
-            // Obtener eventos del calendario
-            const year = new Date().getFullYear();
-            const eventos = await getEventsForYear(tableName, year);
-    
-            // Definir el título para la página
-            const title = 'Página de inicio de la familia';
-    
-            // Generar el enlace a la página agregarmiembros
-            const agregarMiembrosLink = `/agregarmiembros/${tableName}`;
-    
-            // Renderizar la página homeFamilia y pasar el enlace a la plantilla
-            res.render('homeFamilia', {
-                title: title,
-                familyname: familyname,
-                tableName: tableName,
-                agregarMiembrosLink: agregarMiembrosLink,
-                username: username,
-                eventos: eventos
+    try {
+        const tableName = req.params.tableName;
+        const username = req.session.username;
+        const familyname = await getFamilyNameByTableName(tableName);
+        const year = new Date().getFullYear();
+        const eventos = await getEventsForYear(tableName, year);
+        const title = 'Página de inicio de la familia';
+        const agregarMiembrosLink = `/agregarmiembros/${tableName}`;
+
+        // Obtener los estados de ánimo recientes
+        const users = await getRecentAnimos(tableName);
+
+        users.forEach(user => {
+            user.formattedDate = new Date(user.ultima_fecha).toLocaleString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-        } catch (error) {
-            console.error('Error al procesar la solicitud de homeFamilia:', error);
-            res.status(500).send('Error al procesar la solicitud de homeFamilia');
-        }
-    };
+        });
+
+        res.render('homeFamilia', {
+            title,
+            familyname,
+            tableName,
+            agregarMiembrosLink,
+            username,
+            eventos,
+            users // Pasamos los usuarios con sus estados de ánimo a la vista
+        });
+    } catch (error) {
+        console.error('Error al procesar la solicitud de homeFamilia:', error);
+        res.status(500).send('Error al procesar la solicitud de homeFamilia');
+    }
+};
+    
 
     export const insertarmiembros = async (req, res) => {
         try {
@@ -359,12 +370,7 @@ import { format } from 'date-fns';
     };
     
     
-    
-    
-    
-    
-    
-    
+            
     export const addEventController = async (req, res) => {
         try {
             const { tableName, title, description, date } = req.body;
@@ -375,6 +381,106 @@ import { format } from 'date-fns';
             res.status(500).send('Error al agregar el evento');
         }
     };
+
+    export const saveAnimoController = async (req, res) => {
+        try {
+            const { contenidoanimo } = req.body;
+            const username = req.session.username;
+            const tableName = req.params.tableName; // Obtener el nombre de la tabla de la URL
+            const fechamensaje = new Date().toISOString(); // Guardamos la fecha en formato ISO
+    
+            console.log("Datos recibidos:", contenidoanimo, username, tableName, fechamensaje); // Verificar los datos recibidos
+    
+            await saveAnimo(tableName, username, contenidoanimo, fechamensaje); // Pasar tableName como parámetro
+    
+            res.redirect(`/guardar-animo/${tableName}`);
+        } catch (error) {
+            console.error('Error al guardar el estado de ánimo:', error);
+            res.status(500).send('Error al guardar el estado de ánimo');
+        }
+    };
+
+
+
+    export const tareasController = async (req, res) => {
+        try {
+            const tableName = req.params.tableName;
+            const username = req.session.username;
+    
+            // Actualizar tareas no completadas
+            await actualizarTareasNoCompletadas(tableName);
+    
+            // Obtener las tareas
+            const tareas = await getTareas(tableName);
+    
+            res.render('tareas', {
+                title: 'Está en tareas',
+                username,
+                tableName,
+                tareas
+            });
+        } catch (error) {
+            console.error('Error al procesar la solicitud de tareas:', error);
+            res.status(500).send('Error al procesar la solicitud de tareas');
+        }
+    };
+    
+    // Controlador para guardar una nueva tarea
+    export const saveTareaController = async (req, res) => {
+        try {
+            const { tarea, username, fechafintarea } = req.body;
+            const tableName = req.params.tableName;
+    
+            await saveTarea(tableName, username, tarea, fechafintarea);
+    
+            res.redirect(`/tareas/${tableName}`);
+        } catch (error) {
+            console.error('Error al guardar la tarea:', error);
+            res.status(500).send('Error al guardar la tarea');
+        }
+    };
+    
+    // Controlador para marcar una tarea como completada
+    export const completarTareaController = async (req, res) => {
+        try {
+            const tareaId = req.params.tareaId;
+            const tableName = req.params.tableName;
+    
+            await completarTarea(tableName, tareaId);
+    
+            res.redirect(`/tareas/${tableName}`);
+        } catch (error) {
+            console.error('Error al completar la tarea:', error);
+            res.status(500).send('Error al completar la tarea');
+        }
+    };
+    
+    // Controlador para la vista de logros
+    export const logrosController = async (req, res) => {
+        try {
+            const tableName = req.params.tableName;
+            const username = req.session.username;
+            const logros = await getLogros(tableName);
+    
+            if (!username) {
+                return res.status(401).send('No autorizado');
+            }
+    
+            res.render('logros', {
+                title: 'Logros',
+                username,  // Pasa el username aquí
+                tableName, // Pasa el tableName aquí
+                logros
+            });
+        } catch (error) {
+            console.error('Error al procesar la solicitud de logros:', error);
+            res.status(500).send('Error al procesar la solicitud de logros');
+        }
+    };
+
+    
+
+    
 
 
 

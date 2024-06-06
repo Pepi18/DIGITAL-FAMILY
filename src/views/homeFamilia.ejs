@@ -10,20 +10,49 @@
     <%- include('partials/navigation')%>
     <br>
     
-    <h3><span class="text2">Bienvenida familia:  <%= familyname %></span></h3>
+    <h3><span class="text2">Familia:  <%= familyname %> ---- Usuario:<%= username %> </span></h3>
     <br><br><br><br><br><br><br><br>
     <!-- Agregar un botón para dirigirse a la página para agregar miembros -->
     <a href="/agregarmiembros/<%= tableName %>" class="Btn">Agregar familiares</a>
-    <br>
-    <br>
-    <br>
+    <br><br><br>
     <h3 class="gradient-multiline">Comparte este enlace con los miembros de tu familia para que puedan unirse:<a href="/homeFamilia/<%= tableName %>"> http://localhost:3000/homeFamilia/<%= tableName %></a></h3>
-    <br>
-    <br>
-    <br>
-    <br>
+    <br><br><br><br><br>
     <h3 class="gradient-multiline">O bien accede con el código de la famila: <%= tableName %></h3> </div>
-        
+    <br><br><br>
+    <div class="events">
+        <% if (eventos && eventos.length > 0) { %>
+            <h3>Próximos Eventos:</h3>
+            <ul>
+                <% eventos.forEach(evento => { %>
+                    <li>
+                        <h4><%= evento.tituloevento %></h4>
+                        <p><%= evento.descripcionevento %></p>
+                        <p>Fecha: <%= evento.fechainicioevento %></p>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No hay eventos próximos.</p>
+        <% } %>
+        <br><br><br>
+        <div class="user-status">
+            <h2>Estados de ánimo recientes:</h2>
+            <% users.forEach(user => { %>
+                <div class="user-status-item">
+                    <span><%= user.username %></span>
+                    <span><img src="../imagenes/<%= user.contenidoanimo %>.svg" alt="<%= user.contenidoanimo %>"></span>
+                    <span><%= user.formattedDate %></span>
+                </div>
+            <% }); %>
+            
+            <script>
+                function formattedDate(dateString) {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                    return new Date(dateString).toLocaleString(undefined, options);
+                }
+            </script>
+        </div>
+    </div>    
        
     
     
