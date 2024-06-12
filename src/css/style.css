@@ -8,7 +8,7 @@
 
 body {
   background: linear-gradient(90deg, #4de4d5,#b089e6 );
-  margin: 0;
+  margin: 20;
    
 }
   
@@ -184,7 +184,7 @@ a {
   .text2 {
     position: absolute;
     bottom: 75%; 
-    right: 40%;
+    right: 43%;
     font-family:"Audiowide", sans-serif;
     font-size: 2em;
     font-weight: 300;
@@ -376,7 +376,7 @@ a {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
-  background-color: #3ef87f;
+ 
 }
 
 .box-input {
@@ -486,7 +486,7 @@ a {
 #messages li {
   padding: 10px 15px;
   margin-bottom: 10px;
-  max-width: 60%;
+  width: 60%;
   word-wrap: break-word;
   position: relative;
   clear: both;
@@ -497,7 +497,9 @@ a {
   background-color: #b1f3ea;
   align-self: flex-end;
   margin-left: auto;
+  width: 60%; /* Ajusta el ancho del mensaje enviado según tu preferencia */
 }
+
 
 #messages li.received {
   background-color: #f1b6ef;
@@ -532,7 +534,7 @@ a {
 
 /* Estilo para el formulario del chat */
 #chat-form {
-  display: flex;
+  display:contents;
   margin-top: 20px;
 }
 
@@ -549,10 +551,12 @@ button {
   font-size: 16px;
   border: none;
   background-color: #b003db;
-  color: white;
+  color: rgb(255, 255, 255);
   border-radius: 20px;
-  margin-left: 10px;
+  margin-top: 10px;
   cursor: pointer;
+  width: 200px;
+  
 }
 
 .calendar {
@@ -653,4 +657,241 @@ button {
 .day.event {
   background-color: rgb(151, 95, 255); /* Cambia este color según tu preferencia */
   color: white;
+}
+.container {
+  width: 100%; /* Ancho al 100% del contenedor padre */
+  height: 300px; /* Altura fija para el contenedor, ajusta según sea necesario */
+  font-family: cursive;
+  --color: #E1E1E1;
+  background-color: #F3F3F3;
+  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+  background-size: 55px 55px;
+  overflow-y: auto; /* Barra de desplazamiento vertical */
+  overflow-x: hidden; /* Sin barra de desplazamiento horizontal */
+}
+
+
+
+.containerfamilia {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.access, .top-members, .events, .user-status {
+  font-family: cursive;
+  font-size: 15px;
+  border: 10px solid black;
+  padding: 2rem 1rem;
+  min-height: 14em;
+  max-height: 37em; /* Establecer una altura máxima */
+  resize: both;
+  background: linear-gradient(to top, rgba(#cffffe, 0.3), rgba(#f9f7d9, 0.3), rgba(#fce2ce, 0.3), rgba(#ffc1f3, 0.3));
+  border-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3ClinearGradient id='g' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23cffffe' /%3E%3Cstop offset='25%25' stop-color='%23f9f7d9' /%3E%3Cstop offset='50%25' stop-color='%23fce2ce' /%3E%3Cstop offset='100%25' stop-color='%23ffc1f3' /%3E%3C/linearGradient%3E %3Cpath d='M1.5 1.5 l97 0l0 97l-97 0 l0 -97' stroke-linecap='square' stroke='url(%23g)' stroke-width='3'/%3E %3C/svg%3E") 1;
+  text-align: center;
+  overflow-y: auto; /* Agrega scroll vertical cuando sea necesario */
+}
+
+.access {
+  grid-area: 1 / 1; 
+  
+}
+
+.top-members {
+  grid-area: 2 / 2; 
+}
+
+.events {
+  grid-area: 1 / 2; 
+}
+
+.user-status {
+  grid-area: 2 / 1; 
+}
+
+.user-status-item {
+  display: inline-block;
+  width: 250px;
+  margin-right: 20px;
+}
+
+.estado-animo-img {
+  width: 100px;
+  height: 100px;
+}
+
+.containeranimo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px; /* Ajusta el espacio entre las columnas */
+}
+
+.left-column {
+  flex: 1;
+  max-width: 50%;
+}
+
+.right-column {
+  flex: 1;
+  max-width: 50%;
+  text-align: center;
+}
+.estado-animo-img2 {
+  width: 550px;
+  height: 550px;
+}
+
+.textarea:first-child {
+  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+}
+
+.textarea table {
+  margin: 0 auto; /* Esto centra horizontalmente la tabla dentro de su contenedor */
+}
+
+.textarea {
+  text-align: center;
+  font-family: cursive;
+  font-size: 15px;
+  border: 10px solid black;
+  padding: 2rem 1rem;
+  min-height: 14em;
+  width: 60em;
+  resize: both;
+  background: linear-gradient(to top, rgba(#cffffe, 0.3), rgba(#f9f7d9, 0.3), rgba(#fce2ce, 0.3), rgba(#ffc1f3, 0.3));
+  border-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3ClinearGradient id='g' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23cffffe' /%3E%3Cstop offset='25%25' stop-color='%23f9f7d9' /%3E%3Cstop offset='50%25' stop-color='%23fce2ce' /%3E%3Cstop offset='100%25' stop-color='%23ffc1f3' /%3E%3C/linearGradient%3E %3Cpath d='M1.5 1.5 l97 0l0 97l-97 0 l0 -97' stroke-linecap='square' stroke='url(%23g)' stroke-width='3'/%3E %3C/svg%3E") 1;
+}
+
+.tareasflex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto; /* O ajusta la altura según sea necesario */
+}
+.textarea-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  padding: 40px;
+  height: 30vh;
+  
+}
+
+#diario-input {
+  width: 800px; /* Anchura del textarea al 100% del contenedor */
+  height: 220px; /* Altura del textarea */
+  padding: 10px; /* Espaciado interno del textarea */
+  font-size: 16px; /* Tamaño de fuente */
+  border: 1px solid #ccc; /* Borde del textarea */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+
+
+
+
+/* Estilos generales */
+.logros-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Para distribuir las secciones horizontalmente */
+  padding: 10px;
+  max-width: 100%;
+}
+
+/* Estilos para cada sección */
+.logros-container section {
+  font-family: cursive;
+  font-size: 15px;
+  border: 10px solid black;
+  padding: 2rem 1rem;
+  background: linear-gradient(to top, rgba(207, 255, 254, 0.3), rgba(249, 247, 217, 0.3), rgba(252, 226, 206, 0.3), rgba(255, 193, 243, 0.3));
+  border-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E %3ClinearGradient id='g' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23cffffe' /%3E%3Cstop offset='25%25' stop-color='%23f9f7d9' /%3E%3Cstop offset='50%25' stop-color='%23fce2ce' /%3E%3Cstop offset='100%25' stop-color='%23ffc1f3' /%3E%3C/linearGradient%3E %3Cpath d='M1.5 1.5 l97 0l0 97l-97 0 l0 -97' stroke-linecap='square' stroke='url(%23g)' stroke-width='3'/%3E %3C/svg%3E") 1;
+  text-align: center;
+  margin-bottom: 20px; /* Espacio entre las secciones */
+  overflow-y: auto; /* Agrega barra de desplazamiento vertical cuando sea necesario */
+}
+
+/* Ajuste para la primera fila */
+.agregar-recompensa, .canjear-recompensa {
+  flex: 1 0 calc(50% - 20px); /* Cada sección ocupa el 50% del ancho con un espacio entre ellas */
+  min-width: calc(50% - 20px);
+  height: 250px; /* Altura fija para los contenedores de la primera fila */
+}
+
+/* Ajuste para la segunda fila */
+.username-puntos, .recompensas-puntos, .username-puntos-canjeados-recompensa {
+  flex: 1 0 calc(33.333% - 20px); /* Cada sección ocupa el 33.333% del ancho con un espacio entre ellas */
+  min-width: calc(33.333% - 20px);
+  height: 500px; /* Altura fija para los contenedores de la segunda fila */
+}
+
+table {
+  width: 100%; /* Cambia el ancho de la tabla a 100% */
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+th,
+td {
+  padding: 10px;
+  background-color: rgba(255,255,255,0.2);
+  color: #180202;
+}
+
+th {
+  text-align: center;
+}
+
+thead th {
+  background-color: #7cf2b1;
+}
+
+tbody tr:hover {
+  background-color: rgba(255,255,255,0.3);
+}
+
+
+@use postcss-preset-env {
+  stage: 0;
+}
+
+:root {
+  --color-background: #000119;
+  --stroke-width: calc(1em / 16);
+  --font-size: 30vmin;
+  --font-weight: 700;
+  --letter-spacing: calc(1em / 8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-background);
+  display: grid;
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  min-block-size: 100vh;
+  place-items: center;
+  padding: 5vmin;
+}
+
+h2 {
+  background-clip: text;
+  background-image: linear-gradient(to right, #09f1b8, #00a2ff, #ff00d2, #fed90f);
+  color: var(--color-background);
+  font-size: 30px;
+  font-weight: 10px;
+  letter-spacing: 2px;
+  padding: calc(--stroke-width / 2);
+  -webkit-text-stroke-color: transparent;
+  -webkit-text-stroke-width: var(--stroke-width);
 }

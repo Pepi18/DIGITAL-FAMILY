@@ -13,7 +13,7 @@
     
     <section class='wrapper'>
         <div class="navigate-buttons">
-            <span> Estas visualizando el calendario del año: <%= year %></span>
+            <h2> Calendario del año: <%= year %></h2>
             <button class="Btn" id="prevYear">Año Anterior</button>
             <button class="Btn" id="nextYear">Año Siguiente</button>
         </div>
@@ -76,8 +76,8 @@
                     <label for="title">Título del evento:</label>
                     <input type="text" id="title" name="title" required>
                     <label for="description">Descripción del evento:</label>
-                    <textarea id="description" name="description" required></textarea>
-                    <button type="submit">Agregar evento</button>
+                    <input id="description" name="description" required></input>
+                    <button class="Btn" type="submit">Agregar evento</button>
                 </form>
             </div>
         </div>

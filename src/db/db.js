@@ -43,7 +43,9 @@ export async function createFamilyTable(db, tableName) {
                 logroconseguido INTEGER,
                 tituloevento TEXT,
                 descripcionevento TEXT,
-                fechainicioevento TEXT
+                fechainicioevento TEXT,
+                puntos INTEGER DEFAULT 0,
+                recompensa TEXT
             )
         `);
         console.log(`Tabla ${tableName} creada correctamente`);
@@ -257,12 +259,13 @@ export const getTareas = async (tableName) => {
     const query = `
         SELECT id, username, tarea, fechafintarea, tareacompletada
         FROM ${tableName}
-        WHERE tarea IS NOT NULL
+        WHERE tarea IS NOT NULL AND tarea != ''
         ORDER BY fechafintarea ASC
     `;
     const result = await db.all(query);
     return result;
 };
+
 
 // Función para marcar una tarea como completada
 export const completarTarea = async (tableName, tareaId) => {
@@ -293,12 +296,111 @@ export const actualizarTareasNoCompletadas = async (tableName) => {
 export const getLogros = async (tableName) => {
     const db = await connectDB();
     const query = `
-        SELECT username, SUM(logroconseguido = '+1 punto') AS puntos
-        FROM ${tableName}
-        GROUP BY username
+        SELECT username, puntos
+        FROM (
+            SELECT username, 
+                   SUM(CASE WHEN logroconseguido > 0 THEN logroconseguido ELSE 0 END) - 
+                   SUM(CASE WHEN logroconseguido < 0 THEN -logroconseguido ELSE 0 END) AS puntos
+            FROM ${tableName}
+            GROUP BY username
+        ) AS subquery
+        WHERE username IS NOT NULL
         ORDER BY puntos DESC
     `;
     const result = await db.all(query);
     return result;
 };
 
+
+export const eliminarTarea = async (tableName, tareaId) => {
+    const db = await connectDB();
+    const query = `
+        UPDATE ${tableName}
+        SET tarea = NULL
+        WHERE id = ?
+    `;
+    await db.run(query, [tareaId]);
+};
+
+export const getTopMember = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        SELECT username, SUM(logroconseguido) AS puntos
+        FROM ${tableName}
+        GROUP BY username
+        HAVING SUM(logroconseguido) = (
+            SELECT MAX(puntos)
+            FROM (
+                SELECT SUM(logroconseguido) AS puntos
+                FROM ${tableName}
+                GROUP BY username
+            )
+        )
+    `;
+    const result = await db.all(query);
+    return result;
+};
+
+
+
+
+export const agregarRecompensa = async (tableName, puntos, recompensa) => {
+    const db = await connectDB();
+    const query = `
+        INSERT INTO ${tableName} (puntos, recompensa)
+        VALUES (?, ?)
+    `;
+    await db.run(query, [puntos, recompensa]);
+};
+
+// Función para canjear una recompensa
+export const canjearRecompensa = async (tableName, username, puntos, recompensa) => {
+    const db = await connectDB();
+
+    // Registrar la recompensa canjeada
+    const insertQuery = `
+        INSERT INTO ${tableName} (username, logroconseguido, recompensa)
+        VALUES (?, ?, ?)
+    `;
+    await db.run(insertQuery, [username, -puntos, recompensa]);
+};
+
+// Función para obtener los puntos disponibles de un usuario
+export const getPuntosDisponibles = async (tableName, username) => {
+    const db = await connectDB();
+    const query = `
+        SELECT SUM(logroconseguido) AS puntos
+        FROM ${tableName}
+        WHERE username = ?
+    `;
+    const result = await db.get(query, [username]);
+    if (result) {
+        return result.puntos;
+    } else {
+        return 0; // Si el usuario no tiene puntos, devolvemos 0
+    }
+};
+
+
+// Función para obtener logros con recompensas
+export const getLogrosConRecompensas = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        SELECT username, logroconseguido, recompensa
+        FROM ${tableName}
+    `;
+    const logros = await db.all(query);
+    return logros;
+};
+
+
+export const obtenerRecompensas = async (tableName) => {
+    const db = await connectDB();
+    const query = `
+        SELECT recompensa, puntos
+        FROM ${tableName}
+         WHERE puntos > 0
+    `;
+    const recompensas = await db.all(query);
+    return recompensas;
+};

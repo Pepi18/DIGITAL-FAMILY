@@ -8,10 +8,9 @@
 </head>
 <body>
     <%- include('partials/navigation')%>
-        <br>
-        <br>
-        <br>
-        <div class="form-card1">
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+        
+    <div class="form-card1">
         <div class="form-card2">
             <form class="form" action="/homeFamilia" method="post">
                 <p class="form-heading">REGISTRO</p>
@@ -28,9 +27,10 @@
                     <input class="input-field" type="text" name="familyname" placeholder="Familyname" required="">
                 </div>
                 <button class="sendMessage-btn">ENVIAR</button>
-                <a href="/login" class="sendMessage-btn">Ya tienes una cuenta? Inicio de sesión</a>
                 
             </form>
+        </div>
+    </div>
             
             <% if (typeof successMessage !== 'undefined') { %>
                 <div class="alert alert-info" role="alert">
@@ -42,16 +42,5 @@
                     <%= errorMessage %>
                 </div>
             <% } %>
-        </div>
-        <br>
-        <br>
-    </div>
-    <br>
-    <br>
-    <br>
-    
-    
-    
-
 </body>
 </html>

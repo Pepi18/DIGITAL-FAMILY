@@ -4,60 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    
 </head>
 <body>
-    <%- include('partials/navigation')%>
-    <br>
+    <%- include('partials/navigation') %>
+    <h3><span class="text2">Familia: <%= familyname %> - Usuario: <%= username %> </span></h3>
+    <br><br><br><br><br><br><br><br><br><br><br><br>
     
-    <h3><span class="text2">Familia:  <%= familyname %> ---- Usuario:<%= username %> </span></h3>
-    <br><br><br><br><br><br><br><br>
-    <!-- Agregar un botón para dirigirse a la página para agregar miembros -->
-    <a href="/agregarmiembros/<%= tableName %>" class="Btn">Agregar familiares</a>
-    <br><br><br>
-    <h3 class="gradient-multiline">Comparte este enlace con los miembros de tu familia para que puedan unirse:<a href="/homeFamilia/<%= tableName %>"> http://localhost:3000/homeFamilia/<%= tableName %></a></h3>
-    <br><br><br><br><br>
-    <h3 class="gradient-multiline">O bien accede con el código de la famila: <%= tableName %></h3> </div>
-    <br><br><br>
-    <div class="events">
-        <% if (eventos && eventos.length > 0) { %>
-            <h3>Próximos Eventos:</h3>
-            <ul>
-                <% eventos.forEach(evento => { %>
-                    <li>
-                        <h4><%= evento.tituloevento %></h4>
-                        <p><%= evento.descripcionevento %></p>
-                        <p>Fecha: <%= evento.fechainicioevento %></p>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p>No hay eventos próximos.</p>
-        <% } %>
-        <br><br><br>
+    <div class="containerfamilia">
+        <div class="access">
+            
+            <!-- Agregar un botón para dirigirse a la página para agregar miembros -->
+            <h2 >Comparte este enlace con los miembros de tu familia para que puedan unirse:<a href="/homeFamilia/<%= tableName %>"> http://localhost:3000/homeFamilia/<%= tableName %></a></h2>
+            <br><br>
+            <h2>También pueden acceder con el código de la familia: <%= tableName %></h2>
+            <br><br>
+            <a href="/agregarmiembros/<%= tableName %>" class="Btn">Agregar familiares</a>
+            
+        </div>
+
+        <div class="top-members">
+            <% if (topMember && topMember.length > 0) { %>
+                <h2>Los miembros con más puntos este mes son:</h2>
+                <ul>
+                    <% topMember.forEach(member => { %>
+                        <li><%= member.username %> con <%= member.puntos %> puntos</li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No hay miembros con puntos registrados este mes.</p>
+            <% } %>
+            <br><br><br><br>
+            <img src="../../imagenes/win.svg" alt="">
+        </div>
+
+        <div class="events">
+            <% if (eventos && eventos.length > 0) { %>
+                <h2>Próximos Eventos:</h2>
+                <ul>
+                    <% eventos.forEach(evento => { %>
+                        <li>
+                            <h4><%= evento.tituloevento %></h4>
+                            <p><%= evento.descripcionevento %></p>
+                            <p>Fecha: <%= evento.fechainicioevento %></p>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No hay eventos próximos.</p>
+            <% } %>
+        </div>
+
         <div class="user-status">
-            <h2>Estados de ánimo recientes:</h2>
+            <h2>Últimos estados de ánimo:</h2>
             <% users.forEach(user => { %>
                 <div class="user-status-item">
-                    <span><%= user.username %></span>
-                    <span><img src="../imagenes/<%= user.contenidoanimo %>.svg" alt="<%= user.contenidoanimo %>"></span>
+                    <span><%= user.username %></span><br><br>
+                    <!-- Agrega la clase .estado-animo-img aquí -->
+                    <span><img src="../imagenes/<%= user.contenidoanimo %>.svg" alt="<%= user.contenidoanimo %>" class="estado-animo-img"></span>
+                    <br><br>
                     <span><%= user.formattedDate %></span>
                 </div>
             <% }); %>
-            
-            <script>
-                function formattedDate(dateString) {
-                    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                    return new Date(dateString).toLocaleString(undefined, options);
-                }
-            </script>
         </div>
-    </div>    
-       
-    
-    
+    </div>
 
 </body>
-
-
-</html> 
+</html>

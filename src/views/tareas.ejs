@@ -10,6 +10,8 @@
     <%- include('partials/navigation') %>
     <h1 class="text2">Estás en tareas, <%= username %></h1>
     <br><br><br><br><br><br><br><br><br><br><br><br>
+    <div class="tareasflex">
+    <div class="textarea">
     <form action="/guardar-tarea/<%= tableName %>" method="post">
         <label for="tarea">Tarea:</label>
         <input type="text" id="tarea" name="tarea" required>
@@ -19,6 +21,8 @@
         <input type="date" id="fechafintarea" name="fechafintarea" required>
         <button type="submit">Añadir Tarea</button>
     </form>
+</div>
+<div class="textarea">
     <h2>Lista de Tareas</h2>
     <table>
         <thead>
@@ -27,11 +31,12 @@
                 <th>Tarea</th>
                 <th>Fecha Límite</th>
                 <th>Completada</th>
+                <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
             <% tareas.forEach(tarea => { %>
-                <tr>
+                <tr id="tarea-<%= tarea.id %>">
                     <td><%= tarea.username %></td>
                     <td><%= tarea.tarea %></td>
                     <td><%= new Date(tarea.fechafintarea).toLocaleDateString() %></td>
@@ -44,9 +49,37 @@
                             Completada
                         <% } %>
                     </td>
+                    <td>
+                        <button onclick="eliminarTarea('<%= tarea.id %>')">Eliminar</button>
+                    </td>
                 </tr>
             <% }); %>
         </tbody>
     </table>
+</div>
+</div>
+
+    <script>
+        async function eliminarTarea(tareaId) {
+            const tareaRow = document.getElementById(`tarea-${tareaId}`);
+            
+            try {
+                const response = await fetch(`/eliminar-tarea/<%= tableName %>/${tareaId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    tareaRow.style.display = 'none';
+                } else {
+                    console.error('Error al eliminar la tarea');
+                }
+            } catch (error) {
+                console.error('Error al enviar la solicitud de eliminación:', error);
+            }
+        }
+    </script>
 </body>
 </html>

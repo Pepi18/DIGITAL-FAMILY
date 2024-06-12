@@ -11,13 +11,21 @@
     <h1 class="text2">Este es tu diario, <%= username %>!</h1>
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+    <div class="tareasflex">
+    <div class="textarea">
+    <div class="textarea-container">
     <form id="diario-form">
-        <textarea id="diario-input" placeholder="Escribe tu entrada..."></textarea>
-        <button type="submit">Guardar</button>
+        <textarea class="container" id="diario-input" placeholder="Escribe tu entrada..."></textarea>
+        <br><br>
+        <button class="Btn" type="submit">Guardar</button>
     </form>
-
+    </div>
+</div>
+    <div class="textarea">
     <h2>Tus entradas</h2>
-    <div id="entradas-diario">
+
+    <div class="textarea-container">
+    <div  class="container" id="entradas-diario">
         <% entries.forEach(entry => { %>
             <div class="entry">
                 <strong><%= entry.fechadiario %></strong><br>
@@ -25,7 +33,9 @@
             </div>
         <% }) %>
     </div>
-
+</div>
+</div>
+</div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {

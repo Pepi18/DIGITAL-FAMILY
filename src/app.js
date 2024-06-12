@@ -5,6 +5,7 @@ import { Server as socketIo } from 'socket.io'; // Importar como "Server" para e
 import ejs from 'ejs';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import flash from 'connect-flash'; // Importar connect-flash
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './db/db.js';
@@ -26,6 +27,16 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false } // Si usas HTTPS, cambia a true
 }));
+
+// Configurar connect-flash
+app.use(flash());
+
+// Middleware para pasar mensajes flash a las vistas
+app.use((req, res, next) => {
+    res.locals.successMessage = req.flash('success');
+    res.locals.errorMessage = req.flash('error');
+    next();
+});
 
 // Configuro body-parser
 app.use(bodyParser.urlencoded({ extended: true }));

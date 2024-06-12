@@ -5,8 +5,8 @@ import {
     home, loginRequiredMiddleware, registro, chat, diario, animo, tareas,
     logros, homeFamiliaController, loginRequired, insertarmiembros, submitcontroller,
     loginController, loginRedirect, finalizarInsercion, guardarDiario, calendarioController, addEventController,
-    tareasController, logrosController, saveTareaController, completarTareaController
-} from '../controllers/controllers.js';
+    tareasController, logrosController, saveTareaController, completarTareaController, eliminarTareaController,
+    } from '../controllers/controllers.js';
 import { saveAnimo, getRecentAnimos } from '../db/db.js';
 
 const router = Router();
@@ -33,7 +33,7 @@ router.get('/rutaProtegida', loginRequiredMiddleware, (req, res) => {
 });
 
 router.post('/agregarmiembros/:tableName', insertarmiembros);
-router.post('/homeFamilia', submitcontroller);
+router.post('/homeFamilia',loginRequiredMiddleware, submitcontroller);
 router.post('/login/:tableName', loginController);
 router.post('/guardarDiario', loginRequiredMiddleware, guardarDiario);
 router.post('/addEvent', loginRequiredMiddleware, addEventController);
@@ -63,6 +63,8 @@ router.post('/guardar-animo/:tableName', loginRequiredMiddleware, async (req, re
 });
 router.post('/guardar-tarea/:tableName', loginRequiredMiddleware, saveTareaController);
 router.post('/completar-tarea/:tableName/:tareaId', loginRequiredMiddleware, completarTareaController);
+router.post('/eliminar-tarea/:tableName/:tareaId', loginRequiredMiddleware, eliminarTareaController);
+router.post('/logros/:tableName', loginRequiredMiddleware, logrosController);
 
 
 

@@ -10,39 +10,54 @@
     <%- include('partials/navigation') %>
     <h1 class="text2">¿Cuál es tu estado de ánimo, <%= username %>?</h1>
     <br><br><br><br><br><br><br><br><br><br><br><br>
-    <form id="animoForm" action="/guardar-animo/<%= tableName %>" method="post">
-        <label for="contenidoanimo">Selecciona tu estado de ánimo:</label>
-        <select id="contenidoanimo" name="contenidoanimo" onchange="mostrarImagen()">
-            <option value="Feliz">Feliz <img src="../imagenes/Feliz.svg" alt="Feliz"></option>
-            <option value="triste">Triste <img src="../imagenes/triste.svg" alt="Triste"></option>
-            <option value="enfadado">Enfadad@ <img src="../imagenes/enfadado.svg" alt="Enfadado"></option>
-            <option value="neutral">Neutral <img src="../imagenes/win.svg" alt="Neutral"></option>
-            <option value="Confuso">Confus@<img src="../imagenes/Confuso.svg" alt="Confuso"></option>
-            <option value="Familiar">Familiar<img src="../imagenes/Familiar.svg" alt="Familiar"></option>
-            <option value="Angel o Demonio">Angel o Demonio<img src="../imagenes/Angel o Demonio.svg" alt="Angel o Demonio"></option>
-            <option value="Congelado">Congelad@<img src="../imagenes/Congelado.svg" alt="Congelado"></option>
-            <option value="arcaico">Arcaico@<img src="../imagenes/arcaico.svg" alt="Arcaico"></option>
-            <option value="hinchado">Hinchad@<img src="../imagenes/hinchado.svg" alt="Hinchado"></option>
-            <option value="Animada">Animad@<img src="../imagenes/animada.svg" alt="Animada"></option>
-            <option value="En la luna">En la Luna<img src="../imagenes/luna.svg" alt="En la Luna"></option>
-        </select>
-        <button type="submit">Guardar</button>
-    </form>
 
-    <!-- Script para mostrar la imagen seleccionada -->
+    <div class="containeranimo">
+        <div class="left-column">
+            <form id="animoForm" action="/guardar-animo/<%= tableName %>" method="post">
+                <label for="contenidoanimo"><h2>Elige tu estado de ánimo:</h2></label>
+                <select id="contenidoanimo" name="contenidoanimo" onchange="mostrarEstadoAnimo()">
+                    <option value="Animo">¿Qué tal estás hoy? <img src="../imagenes/animo.svg" alt="animo"></option>
+                    <option value="Feliz">Feliz <img src="../imagenes/Feliz.svg" alt="Feliz"></option>
+                    <option value="triste">Triste <img src="../imagenes/triste.svg" alt="Triste"></option>
+                    <option value="enfadado">Enfadad@ <img src="../imagenes/enfadado.svg" alt="Enfadado"></option>
+                    <option value="neutral">Neutral <img src="../imagenes/win.svg" alt="Neutral"></option>
+                    <option value="Confuso">Confus@<img src="../imagenes/Confuso.svg" alt="Confuso"></option>
+                    <option value="Familiar">Familiar<img src="../imagenes/Familiar.svg" alt="Familiar"></option>
+                    <option value="Angel o Demonio">Angel o Demonio<img src="../imagenes/Angel o Demonio.svg" alt="Angel o Demonio"></option>
+                    <option value="Congelado">Congelad@<img src="../imagenes/Congelado.svg" alt="Congelado"></option>
+                    <option value="arcaico">Arcaico@<img src="../imagenes/arcaico.svg" alt="Arcaico"></option>
+                    <option value="hinchado">Hinchad@<img src="../imagenes/hinchado.svg" alt="Hinchado"></option>
+                    <option value="Animada">Animad@<img src="../imagenes/animada.svg" alt="Animada"></option>
+                    <option value="lunatica">Lunática<img src="../imagenes/lunatica.svg" alt="lunatica"></option>
+                </select>
+                <button class="Btn" type="submit">Guardar</button>
+            </form>
+        </div>
+        <div class="right-column">
+            <!-- Espacio para mostrar el estado de ánimo seleccionado -->
+            <h2><div id="estadoAnimoSeleccionado"></div></h2>
+        </div>
+    </div>
+
     <script>
-        function mostrarImagen() {
-            const select = document.getElementById("contenidoanimo");
+        const select = document.getElementById("contenidoanimo");
+        const estadoAnimoSeleccionado = document.getElementById("estadoAnimoSeleccionado");
+
+        // Función para mostrar el estado de ánimo seleccionado
+        function mostrarEstadoAnimo() {
             const selectedIndex = select.selectedIndex;
             const selectedOption = select.options[selectedIndex];
-            const imageSrc = selectedOption.querySelector("img").src;
-            const imagenEstadoAnimo = document.getElementById("imagenEstadoAnimo");
-            imagenEstadoAnimo.src = imageSrc;
-            imagenEstadoAnimo.style.display = "inline"; // Mostrar la imagen
-        }
-    </script>
+            const estadoAnimo = selectedOption.value;
+            const imagenSrc = `../imagenes/${estadoAnimo}.svg`;
 
-    <!-- Imagen oculta inicialmente -->
-    <img id="imagenEstadoAnimo" src="" alt="Imagen de estado de ánimo" style="display: none;">
+            estadoAnimoSeleccionado.innerHTML = `<img src="${imagenSrc}" alt="${estadoAnimo}" class="estado-animo-img2"><br>${estadoAnimo}`;
+        }
+
+        // Mostrar el estado de ánimo seleccionado inicialmente
+        mostrarEstadoAnimo();
+
+        // Actualizar el estado de ánimo seleccionado al cambiar la selección
+        select.addEventListener("change", mostrarEstadoAnimo);
+    </script>
 </body>
 </html>

@@ -7,25 +7,113 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
-    <%- include('partials/navigation', {tableName: tableName }) %>
+    <%- include('partials/navigation') %>
+    <h1 class="text2">Logros de <%= username %></h1>
     <br><br><br><br><br><br><br><br><br><br><br><br>
-    <h1 class="text2">Mira los logros de tu familia, <%= username %></h1>
-    <h2>Logros</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Puntos</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% logros.forEach(logro => { %>
-                <tr>
-                    <td><%= logro.username %></td>
-                    <td><%= logro.puntos %></td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
+
+    <% if (successMessage.length > 0) { %>
+        <div class="success-message"><%= successMessage %></div>
+    <% } %>
+
+    <% if (errorMessage.length > 0) { %>
+        <div class="error-message"><%= errorMessage %></div>
+    <% } %>
+
+    <div class="logros-container">
+        <!-- Sección para agregar recompensas -->
+        <section class="agregar-recompensa">
+            <h2>Agregar Recompensa</h2>
+            <form action="/logros/<%= tableName %>" method="post">
+                <input type="hidden" name="action" value="agregarRecompensa">
+                <label for="puntos">Puntos:</label>
+                <input type="number" id="puntos" name="puntos" required>
+                <label for="recompensa">Recompensa:</label>
+                <input type="text" id="recompensa" name="recompensa" required>
+                <button type="submit">Guardar</button>
+            </form>
+        </section>
+
+        <!-- Sección para canjear recompensas -->
+        <section class="canjear-recompensa">
+            <h2>Canjear Recompensa</h2>
+            <form action="/logros/<%= tableName %>" method="post">
+                <input type="hidden" name="action" value="canjearRecompensa">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="canjePuntos">Puntos:</label>
+                <input type="number" id="canjePuntos" name="puntos" required>
+                <label for="canjeRecompensa">Recompensa:</label>
+                <input type="text" id="canjeRecompensa" name="recompensa" required>
+                <button type="submit">Canjear</button>
+            </form>
+        </section>
+
+        <!-- Sección para mostrar recompensas y puntos obtenidos -->
+        <section class="username-puntos">
+            <h2>Puntos Logrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% logros.forEach(logro => { %>
+                        <tr>
+                            <td><%= logro.username %></td>
+                            <td><%= logro.puntos %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Sección para mostrar recompensas y puntos obtenidos -->
+        <section class="recompensas-puntos">
+            <h2>Recompensas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Recompensa</th>
+                        <th>Precio en Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% recompensas.forEach(recompensa => { %>
+                        <tr>
+                            <td><%= recompensa.recompensa %></td>
+                            <td><%= recompensa.puntos %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Sección para mostrar recompensas y puntos obtenidos -->
+        <section class="username-puntos-canjeados-recompensa">
+            <h2>Recompensas Canjeadas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Puntos Canjeados</th>
+                        <th>Recompensa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% canjes.forEach(canje => { %>
+                        <% if (canje.logroconseguido < 0) { %>
+                            <tr>
+                                <td><%= canje.username %></td>
+                                <td><%= canje.logroconseguido %></td>
+                                <td><%= canje.recompensa %></td>
+                            </tr>
+                        <% } %>
+                    <% }); %>
+                </tbody>
+            </table>
+        </section>
+    </div>
 </body>
 </html>

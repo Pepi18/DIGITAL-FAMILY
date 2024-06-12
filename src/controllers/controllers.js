@@ -1,6 +1,7 @@
 import {verifyCredentials, connectDB, createFamilyTable, insertDataIntoTable, insertMemberIntoTable, getFamilyNameByTableName, 
 insertDiarioEntry, getDiarioEntries, getCalendarEvents, insertCalendarEvent, saveAnimo, getRecentAnimos, getEventsForYear, addEventToCalendar,
-saveTarea, getTareas, completarTarea, actualizarTareasNoCompletadas, getLogros} from '../db/db.js';
+saveTarea, getTareas, completarTarea, actualizarTareasNoCompletadas, getLogros, eliminarTarea, getTopMember,agregarRecompensa,
+canjearRecompensa,getLogrosConRecompensas, obtenerRecompensas, getPuntosDisponibles} from '../db/db.js';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { format } from 'date-fns';
@@ -183,14 +184,18 @@ import { format } from 'date-fns';
             });
         });
 
+        // Obtener el miembro con más puntos
+        const topMember = await getTopMember(tableName);
+
         res.render('homeFamilia', {
             title,
             familyname,
             tableName,
-            agregarMiembrosLink,
+            agregarMiembrosLink,//agregar miembros a la familia
             username,
-            eventos,
-            users // Pasamos los usuarios con sus estados de ánimo a la vista
+            eventos,//se muestran los eventos señalados en el calendario
+            users, // Pasamos los usuarios con sus estados de ánimo a la vista
+            topMember // Pasamos el miembro con más puntos a la vista
         });
     } catch (error) {
         console.error('Error al procesar la solicitud de homeFamilia:', error);
@@ -456,27 +461,80 @@ import { format } from 'date-fns';
     };
     
     // Controlador para la vista de logros
-    export const logrosController = async (req, res) => {
-        try {
-            const tableName = req.params.tableName;
-            const username = req.session.username;
-            const logros = await getLogros(tableName);
-    
-            if (!username) {
-                return res.status(401).send('No autorizado');
+export const logrosController = async (req, res) => {
+    try {
+        const tableName = req.params.tableName;
+        const username = req.session.username;
+
+        if (!username) {
+            return res.status(401).send('No autorizado');
+        }
+
+        if (req.method === 'POST') {
+            const { action, puntos, recompensa, username } = req.body;
+
+            if (action === 'agregarRecompensa') {
+                if (puntos && recompensa) {
+                    await agregarRecompensa(tableName, puntos, recompensa);
+                    req.flash('success', 'Recompensa agregada con éxito');
+                } else {
+                    req.flash('error', 'Faltan puntos o recompensa');
+                }
+            } else if (action === 'canjearRecompensa') {
+                try {
+                    // Verificar si el usuario tiene suficientes puntos antes de realizar el canje
+                    const puntosDisponibles = await getPuntosDisponibles(tableName, username); // Implementa esta función para obtener los puntos disponibles del usuario
+                    if (puntosDisponibles >= puntos) {
+                        await canjearRecompensa(tableName, username, puntos, recompensa);
+                        req.flash('success', 'Recompensa canjeada con éxito');
+                    } else {
+                        req.flash('error', 'No tienes suficientes puntos para canjear esta recompensa');
+                    }
+                } catch (error) {
+                    req.flash('error', error.message);
+                }
             }
+        }
+
+        const logros = await getLogros(tableName);
+        const recompensas = await obtenerRecompensas(tableName);
+        const canjes = await getLogrosConRecompensas(tableName);
+
+        res.render('logros', {
+            title: 'Logros',
+            username,
+            tableName,
+            logros,
+            canjes,
+            recompensas,
+            successMessage: req.flash('success'),
+            errorMessage: req.flash('error')
+        });
+    } catch (error) {
+        console.error('Error al procesar la solicitud de logros:', error);
+        res.status(500).send('Error al procesar la solicitud de logros');
+    }
+};
+
     
-            res.render('logros', {
-                title: 'Logros',
-                username,  // Pasa el username aquí
-                tableName, // Pasa el tableName aquí
-                logros
-            });
+
+
+    export const eliminarTareaController = async (req, res) => {
+        try {
+            const tareaId = req.params.tareaId;
+            const tableName = req.params.tableName;
+    
+            await eliminarTarea(tableName, tareaId);
+    
+            res.status(200).send('Tarea eliminada');
         } catch (error) {
-            console.error('Error al procesar la solicitud de logros:', error);
-            res.status(500).send('Error al procesar la solicitud de logros');
+            console.error('Error al eliminar la tarea:', error);
+            res.status(500).send('Error al eliminar la tarea');
         }
     };
+
+    
+    
 
     
 
