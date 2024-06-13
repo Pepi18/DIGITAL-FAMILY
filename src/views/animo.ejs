@@ -15,20 +15,24 @@
         <div class="left-column">
             <form id="animoForm" action="/guardar-animo/<%= tableName %>" method="post">
                 <label for="contenidoanimo"><h2>Elige tu estado de ánimo:</h2></label>
-                <select id="contenidoanimo" name="contenidoanimo" onchange="mostrarEstadoAnimo()">
+                <br><br>
+                <select class="select-css" id="contenidoanimo" name="contenidoanimo" onchange="mostrarEstadoAnimo()">
                     <option value="Animo">¿Qué tal estás hoy? <img src="../imagenes/animo.svg" alt="animo"></option>
-                    <option value="Feliz">Feliz <img src="../imagenes/Feliz.svg" alt="Feliz"></option>
-                    <option value="triste">Triste <img src="../imagenes/triste.svg" alt="Triste"></option>
-                    <option value="enfadado">Enfadad@ <img src="../imagenes/enfadado.svg" alt="Enfadado"></option>
-                    <option value="neutral">Neutral <img src="../imagenes/win.svg" alt="Neutral"></option>
-                    <option value="Confuso">Confus@<img src="../imagenes/Confuso.svg" alt="Confuso"></option>
-                    <option value="Familiar">Familiar<img src="../imagenes/Familiar.svg" alt="Familiar"></option>
-                    <option value="Angel o Demonio">Angel o Demonio<img src="../imagenes/Angel o Demonio.svg" alt="Angel o Demonio"></option>
-                    <option value="Congelado">Congelad@<img src="../imagenes/Congelado.svg" alt="Congelado"></option>
-                    <option value="arcaico">Arcaico@<img src="../imagenes/arcaico.svg" alt="Arcaico"></option>
-                    <option value="hinchado">Hinchad@<img src="../imagenes/hinchado.svg" alt="Hinchado"></option>
                     <option value="Animada">Animad@<img src="../imagenes/animada.svg" alt="Animada"></option>
-                    <option value="lunatica">Lunática<img src="../imagenes/lunatica.svg" alt="lunatica"></option>
+                    <option value="Angel o Demonio">Angel o Demonio<img src="../imagenes/Angel o Demonio.svg" alt="Angel o Demonio"></option>
+                    <option value="amorosa">Amoros@<img src="../imagenes/amorosa.svg" alt="Amorosa"></option>
+                    <option value="arcaico">Arcaico@<img src="../imagenes/arcaico.svg" alt="Arcaico"></option>
+                    <option value="Confuso">Confus@<img src="../imagenes/Confuso.svg" alt="Confuso"></option>
+                    <option value="Congelado">Congelad@<img src="../imagenes/Congelado.svg" alt="Congelado"></option>
+                    <option value="enfadado">Enfadad@ <img src="../imagenes/enfadado.svg" alt="Enfadado"></option>
+                    <option value="Familiar">Familiar<img src="../imagenes/Familiar.svg" alt="Familiar"></option>
+                    <option value="Feliz">Feliz <img src="../imagenes/Feliz.svg" alt="Feliz"></option>
+                    <option value="hinchado">Hinchad@<img src="../imagenes/hinchado.svg" alt="Hinchado"></option>
+                    <option value="mimoso">Mimos@<img src="../imagenes/mimoso.svg" alt="Mimoso"></option>
+                    <option value="musical">Musical@<img src="../imagenes/musical.svg" alt="Musical"></option>
+                    <option value="triste">Triste <img src="../imagenes/triste.svg" alt="Triste"></option>
+                    <option value="zombi">Zombi<img src="../imagenes/zombi.svg" alt="Zombi"></option>
+                
                 </select>
                 <button class="Btn" type="submit">Guardar</button>
             </form>

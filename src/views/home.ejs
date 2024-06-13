@@ -3,24 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" type ="text/css" href="../css/style.css"></head>
+    <title>Digital Family</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
 </head>
 <body>
-    <%- include('partials/navigation')%>
+    <%- include('partials/navigation') %>
     <h1><span class="text">DIGITAL FAMILY</span></h1>
-    <br><br><br><br><br><br><br><br><br><br>
-    <a href="/registro" class="Btn">Registra tu familia</a>
-    
-    <form action="/login" method="get">
-        <div class="box-input">
-            <div class="border">
-              <input type="text" name="tableName" class="input" placeholder="Código de familia" required>
-            </div>
-          </div>
-          <br><br><br>
-        <button type="submit" class="Btn">Iniciar Sesión</button>
-    </form>
+
+    <div class="containerhome">
+        <div class="columnhome">
+            <br><br><br>
+            <h2>Bienvenidos a Digital Family, el espacio para tu familia.</h2>
+            <h2>Digital Family fortalece los lazos familiares a través de la tecnología. Únete a nosotros y descubre una nueva 
+            forma de estar cerca de los tuyos, sin importar la distancia. Comparte tus momentos especiales, apoya a tus seres queridos y crea recuerdos inolvidables.</h2>  
+            <h2>¡Bienvenidos a Digital Familia, el corazón de tu hogar digital!</h2>
+            <img class="familyligth" src="../imagenes/familypurple.svg" alt="unión">
+        </div>
+
+        <div class="column">
+            <img class="fantasy" src="../imagenes/fantasy.jpg" alt="Imagen 3">
+        </div>
+
+        <div class="columnhome">
+            <a href="/registro" class="Btn">Registra tu familia</a>
+            <br><br><br>
+            <form action="/login" method="get">
+                <div class="box-input">
+                    <div class="border">
+                        <input type="text" name="tableName" class="input" placeholder="Código de familia" required>
+                    </div>
+                </div>
+                <br><br><br>
+                <button type="submit" class="Btn">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
